@@ -1,0 +1,64 @@
+@import "./tokens.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    background-color: var(--bg-0);
+    color: var(--text-1);
+    font-feature-settings: "cv11", "ss03";
+    overflow: hidden;
+  }
+
+  *:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+    border-radius: var(--radius-1);
+  }
+
+  ::selection {
+    background: var(--accent-soft);
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--border-2);
+    border-radius: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
+
+@layer components {
+  .panel {
+    background-color: var(--surface-1);
+    border: 1px solid var(--border-1);
+    border-radius: var(--radius-2);
+  }
+
+  .panel-inset {
+    background-color: var(--bg-1);
+    border: 1px solid var(--border-1);
+    border-radius: var(--radius-2);
+  }
+
+  .divider-x {
+    border-top: 1px solid var(--border-1);
+  }
+
+  .divider-y {
+    border-left: 1px solid var(--border-1);
+  }
+}

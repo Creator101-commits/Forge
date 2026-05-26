@@ -1,0 +1,87 @@
+/*
+ * Forge — Design Tokens
+ * Single source of truth. Tailwind reads these via tailwind.config.ts.
+ * Dark theme is default. Light theme is opt-in via .light on <html>.
+ */
+
+:root,
+.dark {
+  /* Background layers */
+  --bg-0: #0b0d0e;
+  --bg-1: #111416;
+  --bg-2: #161a1d;
+
+  /* Surface layers */
+  --surface-1: #1a1f23;
+  --surface-2: #20262b;
+
+  /* Borders / dividers */
+  --border-1: #262d33;
+  --border-2: #303841;
+
+  /* Text */
+  --text-1: #e6edf3;
+  --text-2: #a8b3bd;
+  --text-3: #6b7681;
+
+  /* Accents */
+  --accent: #2dd4bf;
+  --accent-soft: rgba(45, 212, 191, 0.12);
+  --warn: #f59e0b;
+  --error: #ef4444;
+  --ok: #10b981;
+
+  /* Radii */
+  --radius-1: 4px;
+  --radius-2: 6px;
+  --radius-3: 10px;
+
+  /* Spacing */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+
+  /* Shadows */
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-2: 0 6px 24px rgba(0, 0, 0, 0.5);
+
+  /* Motion */
+  --dur-fast: 120ms;
+  --dur-med: 200ms;
+
+  /* Z-index */
+  --z-base: 0;
+  --z-overlay: 50;
+  --z-modal: 100;
+  --z-toast: 200;
+}
+
+.light {
+  --bg-0: #f7f8fa;
+  --bg-1: #ffffff;
+  --bg-2: #f1f3f5;
+  --surface-1: #ffffff;
+  --surface-2: #f5f7fa;
+  --border-1: #e1e6eb;
+  --border-2: #cdd5dd;
+  --text-1: #0b0d0e;
+  --text-2: #3a4651;
+  --text-3: #6b7681;
+  --accent: #0d9488;
+  --accent-soft: rgba(13, 148, 136, 0.12);
+  --warn: #b45309;
+  --error: #b91c1c;
+  --ok: #047857;
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-2: 0 6px 24px rgba(0, 0, 0, 0.12);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-fast: 0ms;
+    --dur-med: 0ms;
+  }
+}

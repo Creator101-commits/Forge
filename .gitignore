@@ -1,0 +1,32 @@
+node_modules
+dist
+dist-ssr
+.DS_Store
+*.local
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# Rust / Tauri
+src-tauri/target
+src-tauri/gen
+**/*.rs.bk
+
+# Test/coverage output
+coverage
+.nyc_output
+test-results
+playwright-report
+/.cache
+
+# Logs
+*.log
+logs/
+
+# Env
+.env
+.env.*
+!.env.example
+
+# OS
+Thumbs.db
