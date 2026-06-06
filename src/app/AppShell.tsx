@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { clsx } from "clsx";
 import { useUiStore } from "@/store/ui";
 import type { WorkspaceId } from "./workspaces";
@@ -5,13 +6,24 @@ import { TitleBar } from "./TitleBar";
 import { StatusBar } from "./StatusBar";
 import { ActivityRail } from "./ActivityRail";
 import { BottomDock } from "./BottomDock";
-import { WorkspacePlaceholder } from "./WorkspacePlaceholder";
+import { Router } from "./Router";
+import { CommandPalette } from "./CommandPalette";
+import { useGlobalHotkeys, PALETTE_HOTKEY } from "@/lib/hotkeys";
+import { useAutosave } from "@/hooks/useAutosave";
 
 export function AppShell() {
   const active = useUiStore((s) => s.activeWorkspace);
   const leftOpen = useUiStore((s) => s.leftSidebarOpen);
   const rightOpen = useUiStore((s) => s.rightInspectorOpen);
   const bottomOpen = useUiStore((s) => s.bottomDockOpen);
+  const togglePalette = useUiStore((s) => s.togglePalette);
+
+  const hotkeys = useMemo(
+    () => [{ hotkey: PALETTE_HOTKEY, handler: togglePalette }],
+    [togglePalette],
+  );
+  useGlobalHotkeys(hotkeys);
+  useAutosave();
 
   return (
     <div
@@ -43,7 +55,7 @@ export function AppShell() {
                 aria-label={`${active} workspace`}
                 className="min-h-0 min-w-0 bg-bg-1 border-l border-border-1"
               >
-                <WorkspacePlaceholder workspace={active} />
+                <Router workspace={active} />
               </main>
               {rightOpen && <Inspector workspace={active} />}
             </div>
@@ -54,6 +66,7 @@ export function AppShell() {
       </div>
 
       <StatusBar />
+      <CommandPalette />
     </div>
   );
 }

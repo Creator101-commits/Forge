@@ -1,7 +1,7 @@
 {
   "name": "forge",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "description": "Forge — AI-native hardware engineering IDE (Tauri 2 + Rust + React)",
   "license": "UNLICENSED",
@@ -12,7 +12,7 @@
     "tauri": "tauri",
     "tauri:dev": "tauri dev",
     "tauri:build": "tauri build",
-    "lint": "eslint . --ext .ts,.tsx --max-warwnings=0",
+    "lint": "eslint . --ext .ts,.tsx --max-warnings=0",
     "lint:fix": "eslint . --ext .ts,.tsx --fix",
     "format": "prettier --write \"src/**/*.{ts,tsx,css,json,md}\"",
     "format:check": "prettier --check \"src/**/*.{ts,tsx,css,json,md}\"",
@@ -22,15 +22,18 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
+    "@radix-ui/react-dialog": "^1.1.16",
     "@tauri-apps/api": "^2.1.1",
     "@tauri-apps/plugin-log": "^2.0.0",
+    "clsx": "^2.1.1",
+    "cmdk": "^1.1.1",
+    "fuse.js": "^7.4.2",
+    "immer": "^10.1.1",
     "lucide-react": "^0.456.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "zustand": "^5.0.1",
-    "immer": "^10.1.1",
     "zod": "^3.23.8",
-    "clsx": "^2.1.1"
+    "zustand": "^5.0.1"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2.1.0",

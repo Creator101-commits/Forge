@@ -5,7 +5,7 @@
 
 This repository tracks the build described in [`prompt.md`](./prompt.md) following the milestone-by-milestone plan in [`plan.md`](./plan.md).
 
-The current state is **M0 — Foundations & Scaffold** (`v0.1.0`).
+The current state is **M1 — Project Persistence & App Shell State** (`v0.2.0`).
 
 ## Repository layout
 
@@ -19,18 +19,24 @@ hardware/
   tailwind.config.ts design tokens consumed via CSS variables
   index.html         Vite entry HTML
   src/               React + TS frontend
-    app/             AppShell, activity rail, title bar, bottom dock, status bar
+    app/             AppShell, activity rail, title bar, status bar, Router, command palette
     components/      generic UI primitives
     features/        one folder per workspace (cad, circuit, pcb, code, bom, ai, export, settings, dashboard)
-    lib/             ipc client, platform helpers, future fuse/palette/hotkeys
-    store/           zustand slices
+    hooks/           useAutosave (10s + on-blur event-log snapshots)
+    lib/             ipc client, platform/theme helpers, hotkeys, command palette index
+    store/           zustand slices (ui, project, settings)
     styles/          design tokens, global styles
     test/            vitest setup
   src-tauri/         Rust + Tauri 2 backend
+    migrations/      refinery SQL migrations (V0001__init.sql)
     src/
-      lib.rs         entry: builder, command handler wiring, telemetry init
+      lib.rs         entry: builder, AppState, command handler wiring, telemetry init
       main.rs        binary stub
-      commands/      Tauri command surface
+      app_state.rs   active project + user-DB path (parking_lot RwLock)
+      db.rs          rusqlite open + embedded refinery migrations
+      project_store/ on-disk project format + atomic save + event log + recents
+      settings/      user-level settings persistence
+      commands/      Tauri command surface (project, settings, secrets, health)
       errors.rs      typed ForgeError -> WireError
       secrets.rs     OS keychain integration (pluggable, in-memory test backend)
       telemetry.rs   tracing + platform log directory
@@ -40,6 +46,17 @@ hardware/
     tauri.conf.json
   .github/workflows/ CI matrix (Linux/macOS/Windows)
 ```
+
+## Persistence model (M1)
+
+- A **project** is a folder containing `forge-project.json` (human-readable source
+  of truth), `forge.db` (per-project SQLite — event log + indexed graphs), and the
+  workspace subfolders `cad/ circuit/ pcb/ code/ bom/ exports/`.
+- Writes to `forge-project.json` are **atomic** (write to `.tmp` → `fsync` → rename),
+  so a crash mid-write never corrupts the last good state.
+- **User-level** data (recent projects, settings) lives in `forge-user.db` under the
+  platform data directory — never inside a project.
+- Schema migrations are embedded via `refinery` and applied forward-only.
 
 ## Toolchain
 
@@ -64,7 +81,7 @@ pnpm test:coverage        # vitest with coverage report
 cd src-tauri
 cargo fmt --check
 cargo clippy --all-targets -- -D warnings
-cargo test --lib          # Rust unit tests (12 passing as of M0)
+cargo test --lib          # Rust unit tests (38 passing as of M1)
 ```
 
 ## Design tokens
@@ -87,8 +104,8 @@ See [`plan.md`](./plan.md). Each calendar month closes with a tagged release and
 
 | Milestone | Deliverable                                                                 | Tag       |
 | --------- | --------------------------------------------------------------------------- | --------- |
-| M0        | Foundations & scaffold (this commit)                                        | v0.1.0    |
-| M1        | Project persistence + activity rail + command palette + settings v1         | v0.2.0    |
+| M0        | Foundations & scaffold                                                      | v0.1.0    |
+| M1        | Project persistence + activity rail + command palette + settings v1 (this commit) | v0.2.0    |
 | M2        | Monaco code workspace + serial                                              | v0.3.0    |
 | M3        | Pluggable AI providers + approval-gated code patching                       | v0.4.0    |
 | M4        | Schematic editor + ERC                                                      | v0.5.0    |

@@ -18,8 +18,32 @@ pub enum ForgeError {
     #[error("keyring error: {0}")]
     Keyring(String),
 
+    #[error("database error: {0}")]
+    Database(String),
+
+    #[error("serialization error: {0}")]
+    Serde(String),
+
     #[error("internal: {0}")]
     Internal(String),
+}
+
+impl From<rusqlite::Error> for ForgeError {
+    fn from(e: rusqlite::Error) -> Self {
+        ForgeError::Database(e.to_string())
+    }
+}
+
+impl From<refinery::Error> for ForgeError {
+    fn from(e: refinery::Error) -> Self {
+        ForgeError::Database(e.to_string())
+    }
+}
+
+impl From<serde_json::Error> for ForgeError {
+    fn from(e: serde_json::Error) -> Self {
+        ForgeError::Serde(e.to_string())
+    }
 }
 
 impl ForgeError {
@@ -29,6 +53,8 @@ impl ForgeError {
             ForgeError::NotFound(_) => "not_found",
             ForgeError::Io(_) => "io",
             ForgeError::Keyring(_) => "keyring",
+            ForgeError::Database(_) => "database",
+            ForgeError::Serde(_) => "serde",
             ForgeError::Internal(_) => "internal",
         }
     }
@@ -64,6 +90,8 @@ impl ForgeError {
             ForgeError::NotFound(m) => ForgeError::NotFound(m.clone()),
             ForgeError::Io(_) => ForgeError::Internal(e.to_string()),
             ForgeError::Keyring(m) => ForgeError::Keyring(m.clone()),
+            ForgeError::Database(m) => ForgeError::Database(m.clone()),
+            ForgeError::Serde(m) => ForgeError::Serde(m.clone()),
             ForgeError::Internal(m) => ForgeError::Internal(m.clone()),
         }
     }

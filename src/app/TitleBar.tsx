@@ -1,8 +1,10 @@
 import { Search } from "lucide-react";
-import { isMac } from "@/lib/platform";
+import { useUiStore } from "@/store/ui";
+import { formatHotkey, PALETTE_HOTKEY } from "@/lib/hotkeys";
 
 export function TitleBar() {
-  const mod = isMac() ? "\u2318" : "Ctrl";
+  const setPaletteOpen = useUiStore((s) => s.setPaletteOpen);
+  const shortcut = formatHotkey(PALETTE_HOTKEY);
   return (
     <div
       data-testid="title-bar"
@@ -18,14 +20,12 @@ export function TitleBar() {
         type="button"
         aria-label="Open command palette"
         className="group flex items-center gap-2 rounded-2 border border-border-1 bg-surface-1 px-2 py-1 text-xs text-text-2 hover:border-border-2 hover:text-text-1 transition-colors"
-        onClick={() => {
-          /* M1 wires this to the command palette */
-        }}
+        onClick={() => setPaletteOpen(true)}
       >
         <Search className="h-3.5 w-3.5" aria-hidden="true" />
         <span>Search or run command</span>
         <kbd className="rounded bg-bg-2 px-1.5 py-0.5 font-mono text-[10px] text-text-3">
-          {mod}+K
+          {shortcut}
         </kbd>
       </button>
 

@@ -1,6 +1,9 @@
 //! Tauri command surface. Each command is a thin shim that delegates to a
 //! pure-Rust function so the logic is unit-testable without Tauri runtime.
 
+pub mod project;
+pub mod settings;
+
 use crate::errors::Result;
 use crate::secrets::{self, Secret, SecretMeta};
 

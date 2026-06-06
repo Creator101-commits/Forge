@@ -8,9 +8,15 @@
 
 import type { Secret as GeneratedSecret } from "@bindings/Secret";
 import type { SecretMeta as GeneratedSecretMeta } from "@bindings/SecretMeta";
+import type { Project as GeneratedProject } from "@bindings/Project";
+import type { Settings as GeneratedSettings } from "@bindings/Settings";
+import type { RecentProject as GeneratedRecentProject } from "@bindings/RecentProject";
 
 export type Secret = GeneratedSecret;
 export type SecretMeta = GeneratedSecretMeta;
+export type Project = GeneratedProject;
+export type Settings = GeneratedSettings;
+export type RecentProject = GeneratedRecentProject;
 
 let invokeImpl: (<T>(cmd: string, args?: Record<string, unknown>) => Promise<T>) | undefined;
 
@@ -57,4 +63,38 @@ export async function setSecret(secret: Secret, value: string): Promise<SecretMe
 
 export async function deleteSecret(secret: Secret): Promise<void> {
   return invoke<void>("delete_secret", { secret });
+}
+
+// ----- M1 project + settings command surface -----
+
+export async function createProject(path: string, name: string): Promise<Project> {
+  return invoke<Project>("create_project", { path, name });
+}
+
+export async function openProject(path: string): Promise<Project> {
+  return invoke<Project>("open_project", { path });
+}
+
+export async function saveProject(project: Project): Promise<Project> {
+  return invoke<Project>("save_project", { project });
+}
+
+export async function closeProject(): Promise<void> {
+  return invoke<void>("close_project");
+}
+
+export async function listRecentProjects(): Promise<RecentProject[]> {
+  return invoke<RecentProject[]>("list_recent_projects");
+}
+
+export async function appendEventLog(kind: string, payload: unknown): Promise<number> {
+  return invoke<number>("append_event_log", { kind, payload });
+}
+
+export async function getSettings(): Promise<Settings> {
+  return invoke<Settings>("get_settings");
+}
+
+export async function setSettings(settings: Settings): Promise<Settings> {
+  return invoke<Settings>("set_settings", { settings });
 }

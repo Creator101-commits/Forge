@@ -11,6 +11,19 @@
     height: 100%;
   }
 
+  /* Explicit reduced-motion preference (Settings toggle), independent of the
+     OS media query handled in tokens.css. */
+  html.reduce-motion {
+    --dur-fast: 0ms;
+    --dur-med: 0ms;
+  }
+  html.reduce-motion *,
+  html.reduce-motion *::before,
+  html.reduce-motion *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+
   body {
     background-color: var(--bg-0);
     color: var(--text-1);
@@ -60,5 +73,53 @@
 
   .divider-y {
     border-left: 1px solid var(--border-1);
+  }
+
+  .input {
+    background-color: var(--bg-2);
+    border: 1px solid var(--border-1);
+    border-radius: var(--radius-2);
+    padding: 6px 8px;
+    color: var(--text-1);
+    font-size: 13px;
+    transition: border-color var(--dur-fast);
+  }
+  .input::placeholder {
+    color: var(--text-3);
+  }
+  .input:hover {
+    border-color: var(--border-2);
+  }
+
+  .btn-accent {
+    background-color: var(--accent);
+    color: #04211d;
+    border-radius: var(--radius-2);
+    padding: 6px 12px;
+    font-size: 13px;
+    font-weight: 500;
+    transition:
+      opacity var(--dur-fast),
+      filter var(--dur-fast);
+  }
+  .btn-accent:hover:not(:disabled) {
+    filter: brightness(1.05);
+  }
+  .btn-accent:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .btn-ghost {
+    border: 1px solid var(--border-1);
+    border-radius: var(--radius-2);
+    padding: 6px 12px;
+    font-size: 13px;
+    color: var(--text-2);
+    transition: background-color var(--dur-fast);
+  }
+  .btn-ghost:hover {
+    background-color: var(--surface-1);
+    color: var(--text-1);
   }
 }
