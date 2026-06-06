@@ -3,6 +3,7 @@ import type { WorkspaceId } from "./workspaces";
 import { WorkspacePlaceholder } from "./WorkspacePlaceholder";
 import { Dashboard } from "@/features/dashboard/Dashboard";
 import { SettingsWorkspace } from "@/features/settings/SettingsWorkspace";
+import { CodeWorkspace } from "@/features/code/CodeWorkspace";
 
 /**
  * In-shell workspace router.
@@ -15,6 +16,7 @@ import { SettingsWorkspace } from "@/features/settings/SettingsWorkspace";
 const REGISTRY: Partial<Record<WorkspaceId, ComponentType>> = {
   dashboard: Dashboard,
   settings: SettingsWorkspace,
+  code: CodeWorkspace,
 };
 
 export function Router({ workspace }: { workspace: WorkspaceId }) {

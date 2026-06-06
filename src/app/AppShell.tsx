@@ -8,6 +8,7 @@ import { ActivityRail } from "./ActivityRail";
 import { BottomDock } from "./BottomDock";
 import { Router } from "./Router";
 import { CommandPalette } from "./CommandPalette";
+import { CodeSidebar } from "@/features/code/CodeSidebar";
 import { useGlobalHotkeys, PALETTE_HOTKEY } from "@/lib/hotkeys";
 import { useAutosave } from "@/hooks/useAutosave";
 
@@ -72,6 +73,16 @@ export function AppShell() {
 }
 
 function SecondarySidebar({ workspace }: { workspace: WorkspaceId }) {
+  if (workspace === "code") {
+    return (
+      <aside
+        aria-label="Secondary sidebar"
+        className="min-h-0 overflow-hidden border-l border-border-1 bg-bg-1 text-sm text-text-2"
+      >
+        <CodeSidebar />
+      </aside>
+    );
+  }
   return (
     <aside
       aria-label="Secondary sidebar"

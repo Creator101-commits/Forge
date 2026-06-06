@@ -15,8 +15,12 @@ vi.mock("@/lib/ipc", () => ({
     reduced_motion: false,
     telemetry_enabled: false,
     default_ai_provider: null,
+    default_board: null,
   }),
   setSettings: vi.fn(),
+  onEvent: vi.fn().mockResolvedValue(() => {}),
+  listDiagnostics: vi.fn().mockResolvedValue([]),
+  listSerialPorts: vi.fn().mockResolvedValue([]),
 }));
 
 import * as ipc from "@/lib/ipc";

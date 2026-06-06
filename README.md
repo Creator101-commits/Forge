@@ -5,7 +5,7 @@
 
 This repository tracks the build described in [`prompt.md`](./prompt.md) following the milestone-by-milestone plan in [`plan.md`](./plan.md).
 
-The current state is **M1 — Project Persistence & App Shell State** (`v0.2.0`).
+The current state is **M2 — Code Workspace & Serial** (`v0.3.0`).
 
 ## Repository layout
 
@@ -19,24 +19,30 @@ hardware/
   tailwind.config.ts design tokens consumed via CSS variables
   index.html         Vite entry HTML
   src/               React + TS frontend
-    app/             AppShell, activity rail, title bar, status bar, Router, command palette
+    app/             AppShell, activity rail, title bar, status bar, Router, command palette, bottom dock
     components/      generic UI primitives
-    features/        one folder per workspace (cad, circuit, pcb, code, bom, ai, export, settings, dashboard)
+    features/        one folder per workspace
+      code/          Monaco editor, tabs, virtualized file tree, search, problems, serial monitor, board picker
     hooks/           useAutosave (10s + on-blur event-log snapshots)
-    lib/             ipc client, platform/theme helpers, hotkeys, command palette index
-    store/           zustand slices (ui, project, settings)
+    lib/             ipc client + events, platform/theme helpers, hotkeys, command palette, language detection
+    store/           zustand slices (ui, project, settings, code, serial, diagnostics)
     styles/          design tokens, global styles
-    test/            vitest setup
+    test/            vitest setup (incl. Monaco mock)
   src-tauri/         Rust + Tauri 2 backend
     migrations/      refinery SQL migrations (V0001__init.sql)
     src/
       lib.rs         entry: builder, AppState, command handler wiring, telemetry init
       main.rs        binary stub
-      app_state.rs   active project + user-DB path (parking_lot RwLock)
+      app_state.rs   active project, user-DB path, diagnostics, serial session, watcher lifecycle
       db.rs          rusqlite open + embedded refinery migrations
+      filesystem/    sandboxed FS ops (path-validated) + notify watcher
+      search/        project-wide content search (ignore-walker + regex)
+      serial/        serial trait + serialport backend + loopback mock + reader session
+      diagnostics/   shared diagnostic model (error/warning/info/hint + 1-based ranges)
+      boards/        board profile catalog (Uno, Nano, Mega, ESP32, ESP8266, Pico, STM32)
       project_store/ on-disk project format + atomic save + event log + recents
       settings/      user-level settings persistence
-      commands/      Tauri command surface (project, settings, secrets, health)
+      commands/      Tauri command surface (project, settings, secrets, health, filesystem, search, serial, diagnostics, boards)
       errors.rs      typed ForgeError -> WireError
       secrets.rs     OS keychain integration (pluggable, in-memory test backend)
       telemetry.rs   tracing + platform log directory
@@ -46,6 +52,23 @@ hardware/
     tauri.conf.json
   .github/workflows/ CI matrix (Linux/macOS/Windows)
 ```
+
+## Code workspace (M2)
+
+- **Editor** — Monaco multi-tab editor with per-tab dirty tracking and `Cmd/Ctrl+S`
+  save. Language is detected by file extension (`src/lib/language.ts`).
+- **File tree** — virtualized (`@tanstack/react-virtual`) over `list_dir`, refreshing
+  live from a `notify` watcher (`fs://change` events). All filesystem access is
+  sandboxed to the active project root; `..` traversal and absolute paths are rejected.
+- **Search** — project-wide content search (gitignore-aware walk + regex), results
+  jump to the matching line.
+- **Problems** — diagnostics panel in the bottom dock; clicking an entry reveals the
+  range in the editor. ERC/DRC/compiler diagnostics (M4/M6/M9) feed the same model.
+- **Serial Monitor** — port + baud picker, timestamped lines, autoscroll, and send,
+  streaming over `serial://data`/`serial://status`. A loopback mock backend keeps the
+  Rust serial tests hardware-free.
+- **Boards** — board profile is persisted to the project (`board_target`) and to a
+  user default (`Settings.default_board`); connection state shows in the status bar.
 
 ## Persistence model (M1)
 
@@ -63,7 +86,7 @@ hardware/
 - Node 20+
 - pnpm 9 (managed via `corepack enable && corepack prepare pnpm@9.15.0 --activate`)
 - Rust stable (1.77+)
-- Linux: `libwebkit2gtk-4.1-dev`, `libayatana-appindicator3-dev`, `librsvg2-dev`, `libgtk-3-dev`, `libsoup-3.0-dev`
+- Linux: `libwebkit2gtk-4.1-dev`, `libayatana-appindicator3-dev`, `librsvg2-dev`, `libgtk-3-dev`, `libsoup-3.0-dev`, `libudev-dev` (serial)
 
 ## Common tasks
 
@@ -81,7 +104,7 @@ pnpm test:coverage        # vitest with coverage report
 cd src-tauri
 cargo fmt --check
 cargo clippy --all-targets -- -D warnings
-cargo test --lib          # Rust unit tests (38 passing as of M1)
+cargo test --lib          # Rust unit tests (74 passing as of M2)
 ```
 
 ## Design tokens
@@ -102,18 +125,18 @@ Dark theme is the default; `.light` on `<html>` flips the palette.
 
 See [`plan.md`](./plan.md). Each calendar month closes with a tagged release and green CI on all three OSes.
 
-| Milestone | Deliverable                                                                 | Tag       |
-| --------- | --------------------------------------------------------------------------- | --------- |
-| M0        | Foundations & scaffold                                                      | v0.1.0    |
-| M1        | Project persistence + activity rail + command palette + settings v1 (this commit) | v0.2.0    |
-| M2        | Monaco code workspace + serial                                              | v0.3.0    |
-| M3        | Pluggable AI providers + approval-gated code patching                       | v0.4.0    |
-| M4        | Schematic editor + ERC                                                      | v0.5.0    |
-| M5        | Circuit: breadboard, block, ladder modes                                    | v0.6.0    |
-| M6        | PCB workspace + DRC + Gerber                                                | v0.7.0    |
-| M7        | CAD workspace                                                               | v0.8.0    |
-| M8        | BOM + full export pipeline                                                  | v0.9.0    |
-| M9        | Compile + upload toolchain                                                  | v0.10.0   |
-| M10       | Demo, onboarding, perf, accessibility                                       | v0.11.0   |
-| M11       | QA, security, fuzz, migrations                                              | v0.12.0-rc|
-| M12       | Release engineering: signed installers, auto-update, docs                   | v1.0.0    |
+| Milestone | Deliverable                                                         | Tag        |
+| --------- | ------------------------------------------------------------------- | ---------- |
+| M0        | Foundations & scaffold                                              | v0.1.0     |
+| M1        | Project persistence + activity rail + command palette + settings v1 | v0.2.0     |
+| M2        | Monaco code workspace + serial (this commit)                        | v0.3.0     |
+| M3        | Pluggable AI providers + approval-gated code patching               | v0.4.0     |
+| M4        | Schematic editor + ERC                                              | v0.5.0     |
+| M5        | Circuit: breadboard, block, ladder modes                            | v0.6.0     |
+| M6        | PCB workspace + DRC + Gerber                                        | v0.7.0     |
+| M7        | CAD workspace                                                       | v0.8.0     |
+| M8        | BOM + full export pipeline                                          | v0.9.0     |
+| M9        | Compile + upload toolchain                                          | v0.10.0    |
+| M10       | Demo, onboarding, perf, accessibility                               | v0.11.0    |
+| M11       | QA, security, fuzz, migrations                                      | v0.12.0-rc |
+| M12       | Release engineering: signed installers, auto-update, docs           | v1.0.0     |

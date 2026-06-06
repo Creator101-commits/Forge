@@ -1,11 +1,16 @@
 import { useState } from "react";
 import { clsx } from "clsx";
+import { ProblemsPanel } from "@/features/code/ProblemsPanel";
+import { SerialMonitor } from "@/features/code/SerialMonitor";
+import { useDiagnosticsStore } from "@/store/diagnostics";
 
 const TABS = ["AI", "Problems", "Output", "Serial Monitor"] as const;
 type Tab = (typeof TABS)[number];
 
 export function BottomDock() {
-  const [tab, setTab] = useState<Tab>("AI");
+  const [tab, setTab] = useState<Tab>("Problems");
+  const problemCount = useDiagnosticsStore((s) => s.items.length);
+  const bare = tab === "Problems" || tab === "Serial Monitor";
   return (
     <section
       aria-label="Bottom dock"
@@ -27,14 +32,24 @@ export function BottomDock() {
             )}
           >
             {t}
+            {t === "Problems" && problemCount > 0 && (
+              <span className="ml-1.5 rounded-full bg-surface-2 px-1.5 text-[10px] text-text-2">
+                {problemCount}
+              </span>
+            )}
           </button>
         ))}
       </div>
-      <div className="overflow-auto border-t border-border-1 p-3 text-xs text-text-3">
+      <div
+        className={clsx(
+          "min-h-0 overflow-auto border-t border-border-1 text-xs text-text-3",
+          bare ? "" : "p-3",
+        )}
+      >
         {tab === "AI" && <div>AI dock arrives in M3.</div>}
-        {tab === "Problems" && <div>No problems detected.</div>}
+        {tab === "Problems" && <ProblemsPanel />}
         {tab === "Output" && <div>Compile output appears here in M9.</div>}
-        {tab === "Serial Monitor" && <div>Serial monitor arrives in M2.</div>}
+        {tab === "Serial Monitor" && <SerialMonitor />}
       </div>
     </section>
   );

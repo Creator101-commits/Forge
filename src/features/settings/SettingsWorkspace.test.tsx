@@ -18,6 +18,7 @@ const defaults: Settings = {
   reduced_motion: false,
   telemetry_enabled: false,
   default_ai_provider: null,
+  default_board: null,
 };
 
 beforeEach(() => {

@@ -74,6 +74,8 @@ pub struct Settings {
     pub telemetry_enabled: bool,
     /// Selected default AI provider id, if any.
     pub default_ai_provider: Option<String>,
+    /// Preferred default board profile id, if any.
+    pub default_board: Option<String>,
 }
 
 impl Default for Settings {
@@ -84,6 +86,7 @@ impl Default for Settings {
             reduced_motion: false,
             telemetry_enabled: false,
             default_ai_provider: None,
+            default_board: None,
         }
     }
 }

@@ -16,4 +16,8 @@ density: string, reduced_motion: boolean, telemetry_enabled: boolean,
 /**
  * Selected default AI provider id, if any.
  */
-default_ai_provider: string | null, };
+default_ai_provider: string | null, 
+/**
+ * Preferred default board profile id, if any.
+ */
+default_board: string | null, };

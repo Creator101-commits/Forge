@@ -6,12 +6,17 @@
 //!   - `secrets`  wraps the OS keychain via the `keyring` crate.
 
 pub mod app_state;
+pub mod boards;
 pub mod commands;
 pub mod db;
+pub mod diagnostics;
 pub mod errors;
+pub mod filesystem;
 pub mod project_store;
 pub mod schema;
+pub mod search;
 pub mod secrets;
+pub mod serial;
 pub mod settings;
 pub mod telemetry;
 
@@ -40,6 +45,21 @@ pub fn run() {
             commands::project::append_event_log,
             commands::settings::get_settings,
             commands::settings::set_settings,
+            commands::filesystem::read_file,
+            commands::filesystem::write_file,
+            commands::filesystem::list_dir,
+            commands::filesystem::rename_path,
+            commands::filesystem::delete_path,
+            commands::filesystem::watch_path,
+            commands::search::search_project,
+            commands::diagnostics::push_diagnostic,
+            commands::diagnostics::list_diagnostics,
+            commands::diagnostics::clear_diagnostics,
+            commands::serial::list_serial_ports,
+            commands::serial::connect_serial,
+            commands::serial::disconnect_serial,
+            commands::serial::send_serial_data,
+            commands::boards::list_board_profiles,
         ])
         .run(tauri::generate_context!())
         .expect("error while running forge");
