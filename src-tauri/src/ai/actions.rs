@@ -12,19 +12,11 @@ use serde::{Deserialize, Serialize};
 #[serde(tag = "kind", rename_all = "camelCase")]
 pub enum AiAction {
     /// Create a new file with the given content.
-    CreateFile {
-        path: String,
-        content: String,
-    },
+    CreateFile { path: String, content: String },
     /// Replace the entire content of an existing file.
-    UpdateFile {
-        path: String,
-        content: String,
-    },
+    UpdateFile { path: String, content: String },
     /// Delete a file.
-    DeleteFile {
-        path: String,
-    },
+    DeleteFile { path: String },
     /// Apply a precise patch to a range of lines in an existing file.
     /// Lines are 1-based and inclusive on both ends.
     PatchRange {

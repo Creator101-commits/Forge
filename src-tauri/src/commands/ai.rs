@@ -4,7 +4,7 @@
 //! previews. Streaming chat emits Tauri events `ai://delta`, `ai://done`,
 //! and `ai://action`.
 
-use crate::ai::actions::{AiAction, ActionRecord, ActionStatus};
+use crate::ai::actions::{ActionRecord, ActionStatus, AiAction};
 use crate::ai::registry::DynAiProvider;
 use crate::ai::{ChatRequest, ProviderCaps};
 use crate::app_state::AppState;
@@ -34,11 +34,7 @@ pub struct AiProviderInfo {
 /// that users can override.
 fn default_models_for(provider_id: &str) -> Vec<String> {
     match provider_id {
-        "openai" => vec![
-            "gpt-4o".into(),
-            "gpt-4o-mini".into(),
-            "gpt-4-turbo".into(),
-        ],
+        "openai" => vec!["gpt-4o".into(), "gpt-4o-mini".into(), "gpt-4-turbo".into()],
         "anthropic" => vec![
             "claude-sonnet-4-20250514".into(),
             "claude-3-5-haiku-20241022".into(),
@@ -201,10 +197,12 @@ pub async fn set_provider_impl(
                     )
                 })?
                 .to_string();
-            std::sync::Arc::new(crate::ai::providers::openai_compat::OpenAICompatProvider::new(
-                api_key.to_string(),
-                url,
-            ))
+            std::sync::Arc::new(
+                crate::ai::providers::openai_compat::OpenAICompatProvider::new(
+                    api_key.to_string(),
+                    url,
+                ),
+            )
         }
         other => {
             return Err(ForgeError::InvalidArgument(format!(
@@ -337,33 +335,37 @@ pub fn apply_patch_impl(state: &AppState, action: AiAction) -> Result<ActionReco
             let end = (*end_line as usize).min(lines.len());
 
             let mut new_content = String::new();
-            for i in 0..start {
-                new_content.push_str(lines[i]);
+            for line in lines.iter().take(start) {
+                new_content.push_str(line);
                 new_content.push('\n');
             }
             new_content.push_str(replacement);
             new_content.push('\n');
-            for i in end..lines.len() {
-                new_content.push_str(lines[i]);
+            for line in lines.iter().skip(end) {
+                new_content.push_str(line);
                 new_content.push('\n');
             }
 
             fs::write_file(&root, path, &new_content)?;
         }
-        AiAction::InsertBefore { path, line, content } => {
+        AiAction::InsertBefore {
+            path,
+            line,
+            content,
+        } => {
             let existing = fs::read_file(&root, path)?;
             let lines: Vec<&str> = existing.lines().collect();
             let insert_at = (*line as usize).saturating_sub(1).min(lines.len());
 
             let mut new_content = String::new();
-            for i in 0..insert_at {
-                new_content.push_str(lines[i]);
+            for line in lines.iter().take(insert_at) {
+                new_content.push_str(line);
                 new_content.push('\n');
             }
             new_content.push_str(content);
             new_content.push('\n');
-            for i in insert_at..lines.len() {
-                new_content.push_str(lines[i]);
+            for line in lines.iter().skip(insert_at) {
+                new_content.push_str(line);
                 new_content.push('\n');
             }
 
@@ -509,10 +511,7 @@ mod tests {
         };
 
         apply_patch_impl(&state, action).unwrap();
-        assert_eq!(
-            fs::read_file(&root, "src/main.ino").unwrap(),
-            "new content"
-        );
+        assert_eq!(fs::read_file(&root, "src/main.ino").unwrap(), "new content");
     }
 
     #[test]
@@ -636,10 +635,7 @@ mod tests {
         assert!(fs::read_file(&root, "src/temp.ino").is_err());
 
         revert_patch_impl(&state, &record.id).unwrap();
-        assert_eq!(
-            fs::read_file(&root, "src/temp.ino").unwrap(),
-            "restore me"
-        );
+        assert_eq!(fs::read_file(&root, "src/temp.ino").unwrap(), "restore me");
     }
 
     #[test]

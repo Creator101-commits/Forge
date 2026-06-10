@@ -9,7 +9,8 @@ use std::path::PathBuf;
 use tauri::State;
 
 fn active_root(state: &AppState) -> Result<PathBuf> {
-    state.active_root()
+    state
+        .active_root()
         .ok_or_else(|| crate::errors::ForgeError::InvalidArgument("no active project".into()))
 }
 
@@ -32,7 +33,8 @@ fn load_circuit_components(conn: &rusqlite::Connection) -> Result<Vec<CircuitCom
             mode: r.get(9)?,
         })
     })?;
-    rows.collect::<std::result::Result<Vec<_>, _>>().map_err(|e| e.into())
+    rows.collect::<std::result::Result<Vec<_>, _>>()
+        .map_err(|e| e.into())
 }
 
 pub fn bom_generate_impl(state: &AppState) -> Result<Vec<BomItem>> {

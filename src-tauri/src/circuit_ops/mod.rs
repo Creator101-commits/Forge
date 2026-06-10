@@ -97,9 +97,10 @@ pub fn run_erc(
         // Find which nets are associated with wires connected to this pin.
         let connected = wires.iter().any(|w| {
             // Check if any wire point is close to this pin's coordinates.
-            let touches_pin = w.points.iter().any(|(px, py)| {
-                (*px - pin.x).abs() < 0.001 && (*py - pin.y).abs() < 0.001
-            });
+            let touches_pin = w
+                .points
+                .iter()
+                .any(|(px, py)| (*px - pin.x).abs() < 0.001 && (*py - pin.y).abs() < 0.001);
             if !touches_pin {
                 return false;
             }
@@ -111,7 +112,10 @@ pub fn run_erc(
             issues.push(ErcIssue {
                 severity: ErcSeverity::Warning,
                 code: "floating_pin".into(),
-                message: format!("Pin {} ({}) of component {} appears unconnected", pin.name, pin.number, pin.component_id),
+                message: format!(
+                    "Pin {} ({}) of component {} appears unconnected",
+                    pin.name, pin.number, pin.component_id
+                ),
                 component_ids: vec![pin.component_id.clone()],
             });
         }
@@ -132,9 +136,9 @@ pub fn run_erc(
     }
 
     // Check for missing power nets
-    let has_gnd = nets.iter().any(|n| {
-        n.name.to_lowercase().contains("gnd") || n.name.to_lowercase().contains("ground")
-    });
+    let has_gnd = nets
+        .iter()
+        .any(|n| n.name.to_lowercase().contains("gnd") || n.name.to_lowercase().contains("ground"));
     let has_vcc = nets.iter().any(|n| {
         n.name.to_lowercase().contains("vcc")
             || n.name.to_lowercase().contains("vdd")
@@ -167,17 +171,28 @@ mod tests {
 
     fn make_comp(id: &str, ref_des: &str) -> CircuitComponent {
         CircuitComponent {
-            id: id.into(), ref_des: ref_des.into(), value: "10k".into(),
-            symbol_id: "resistor".into(), footprint_id: None,
-            x: 0.0, y: 0.0, rotation: 0.0, mirrored: false, mode: "schematic".into(),
+            id: id.into(),
+            ref_des: ref_des.into(),
+            value: "10k".into(),
+            symbol_id: "resistor".into(),
+            footprint_id: None,
+            x: 0.0,
+            y: 0.0,
+            rotation: 0.0,
+            mirrored: false,
+            mode: "schematic".into(),
         }
     }
 
     fn make_pin(id: &str, comp_id: &str, etype: &str, x: f64, y: f64) -> CircuitPin {
         CircuitPin {
-            id: id.into(), component_id: comp_id.into(),
-            name: "pin".into(), number: "1".into(),
-            x, y, electrical_type: etype.into(),
+            id: id.into(),
+            component_id: comp_id.into(),
+            name: "pin".into(),
+            number: "1".into(),
+            x,
+            y,
+            electrical_type: etype.into(),
         }
     }
 

@@ -34,7 +34,11 @@ pub fn detect_toolchains() -> Vec<Toolchain> {
     vec![
         probe("arduino-cli", "Arduino CLI", &["version"]),
         probe("platformio", "PlatformIO", &["--version"]),
-        probe("rustup", "Rust Embedded", &["target", "list", "--installed"]),
+        probe(
+            "rustup",
+            "Rust Embedded",
+            &["target", "list", "--installed"],
+        ),
         probe("python3", "MicroPython", &["--version"]),
     ]
 }
@@ -141,8 +145,7 @@ pub fn list_arduino_boards() -> Vec<BoardInfo> {
                 fqbn: Option<String>,
             }
 
-            let entries: Vec<CliEntry> =
-                serde_json::from_slice(&out.stdout).unwrap_or_default();
+            let entries: Vec<CliEntry> = serde_json::from_slice(&out.stdout).unwrap_or_default();
             entries
                 .into_iter()
                 .flat_map(|e| {

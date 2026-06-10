@@ -23,6 +23,12 @@ impl OllamaProvider {
     }
 }
 
+impl Default for OllamaProvider {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 #[derive(Serialize)]
 struct OllamaChatRequest {
     model: String,
@@ -152,7 +158,7 @@ impl AiProvider for OllamaProvider {
                             }
                         }
                     }
-                    Err(e) => yield Err(AiError::Network(reqwest::Error::from(e))),
+                    Err(e) => yield Err(AiError::Network(e)),
                 }
             }
             // Check for remaining data without a trailing newline

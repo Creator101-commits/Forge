@@ -141,9 +141,7 @@ pub fn gather_context(state: &AppState) -> ProjectContext {
 
     ProjectContext {
         project: active.as_ref().map(|a| a.project.clone()),
-        board_target: active
-            .as_ref()
-            .and_then(|a| a.project.board_target.clone()),
+        board_target: active.as_ref().and_then(|a| a.project.board_target.clone()),
         ai_persona: active
             .as_ref()
             .map(|a| a.project.ai_persona.clone())
@@ -156,10 +154,7 @@ pub fn gather_context(state: &AppState) -> ProjectContext {
 
 /// Trim conversation history to stay within a rough token limit while keeping
 /// the most recent messages and the system prompt.
-pub fn trim_history(
-    messages: &[ChatMessage],
-    max_recent: usize,
-) -> Vec<ChatMessage> {
+pub fn trim_history(messages: &[ChatMessage], max_recent: usize) -> Vec<ChatMessage> {
     if messages.len() <= max_recent {
         return messages.to_vec();
     }

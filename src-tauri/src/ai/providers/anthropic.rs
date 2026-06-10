@@ -231,8 +231,8 @@ data: {\"type\":\"message_stop\"}
             .mount(&mock_server)
             .await;
 
-        let provider = AnthropicProvider::new("test-key".to_string())
-            .with_base_url(mock_server.uri());
+        let provider =
+            AnthropicProvider::new("test-key".to_string()).with_base_url(mock_server.uri());
 
         let req = ChatRequest {
             messages: vec![crate::ai::ChatMessage {

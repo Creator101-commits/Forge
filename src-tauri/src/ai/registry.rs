@@ -26,9 +26,15 @@ impl ProviderRegistry {
         let mut map = self.providers.write().await;
         map.insert(id.to_string(), provider);
     }
-    
+
     pub async fn list_providers(&self) -> Vec<String> {
         let map = self.providers.read().await;
         map.keys().cloned().collect()
+    }
+}
+
+impl Default for ProviderRegistry {
+    fn default() -> Self {
+        Self::new()
     }
 }

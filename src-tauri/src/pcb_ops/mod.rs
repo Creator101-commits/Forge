@@ -130,7 +130,10 @@ pub fn run_drc(
             issues.push(DrcIssue {
                 severity: DrcSeverity::Warning,
                 code: "unconnected_pad".into(),
-                message: format!("Pad '{}' on footprint '{}' has no net assignment", pad.name, pad.footprint_id),
+                message: format!(
+                    "Pad '{}' on footprint '{}' has no net assignment",
+                    pad.name, pad.footprint_id
+                ),
                 position: None,
             });
         }
@@ -158,11 +161,26 @@ mod tests {
     use super::*;
 
     fn make_fp(id: &str, ref_: &str) -> PcbFootprint {
-        PcbFootprint { id: id.into(), component_ref: ref_.into(), library_id: "0805".into(), x: 0., y: 0., rotation: 0., side: "top".into() }
+        PcbFootprint {
+            id: id.into(),
+            component_ref: ref_.into(),
+            library_id: "0805".into(),
+            x: 0.,
+            y: 0.,
+            rotation: 0.,
+            side: "top".into(),
+        }
     }
 
     fn make_pad(id: &str, fp_id: &str, net: Option<&str>) -> PcbPad {
-        PcbPad { id: id.into(), footprint_id: fp_id.into(), name: "1".into(), net_id: net.map(|s| s.into()), shape_json: "{}".into(), layer_mask: 1 }
+        PcbPad {
+            id: id.into(),
+            footprint_id: fp_id.into(),
+            name: "1".into(),
+            net_id: net.map(|s| s.into()),
+            shape_json: "{}".into(),
+            layer_mask: 1,
+        }
     }
 
     #[test]
@@ -182,8 +200,11 @@ mod tests {
     #[test]
     fn detects_invalid_trace() {
         let t = PcbTrace {
-            id: "t1".into(), net_id: "n1".into(), layer_id: "l1".into(),
-            points_json: "[[0,0]]".into(), width: 0.2,
+            id: "t1".into(),
+            net_id: "n1".into(),
+            layer_id: "l1".into(),
+            points_json: "[[0,0]]".into(),
+            width: 0.2,
         };
         let issues = run_drc(&[], &[], &[t], &[]);
         assert!(issues.iter().any(|i| i.code == "invalid_trace"));

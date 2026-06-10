@@ -8,7 +8,8 @@ use std::path::PathBuf;
 use tauri::State;
 
 fn active_root(state: &AppState) -> Result<PathBuf> {
-    state.active_root()
+    state
+        .active_root()
         .ok_or_else(|| crate::errors::ForgeError::InvalidArgument("no active project".into()))
 }
 

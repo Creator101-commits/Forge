@@ -204,8 +204,7 @@ data: [DONE]\n\
             .mount(&mock_server)
             .await;
 
-        let provider = OpenAIProvider::new("test-key".to_string())
-            .with_base_url(mock_server.uri());
+        let provider = OpenAIProvider::new("test-key".to_string()).with_base_url(mock_server.uri());
 
         let req = ChatRequest {
             messages: vec![crate::ai::ChatMessage {

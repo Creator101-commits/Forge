@@ -13,9 +13,15 @@ pub struct CadObject {
     pub parent_id: Option<String>,
     pub name: String,
     pub kind: String, // "box" | "cylinder" | "sphere" | "cone" | "torus" | "plane" | "model"
-    pub x: f64, pub y: f64, pub z: f64,
-    pub rx: f64, pub ry: f64, pub rz: f64,
-    pub sx: f64, pub sy: f64, pub sz: f64,
+    pub x: f64,
+    pub y: f64,
+    pub z: f64,
+    pub rx: f64,
+    pub ry: f64,
+    pub rz: f64,
+    pub sx: f64,
+    pub sy: f64,
+    pub sz: f64,
     pub color: String,
     pub locked: bool,
     pub hidden: bool,
@@ -68,7 +74,25 @@ mod tests {
     use super::*;
 
     fn box_obj(id: &str, x: f64, y: f64, z: f64, sx: f64, sy: f64, sz: f64) -> CadObject {
-        CadObject { id: id.into(), parent_id: None, name: id.into(), kind: "box".into(), x, y, z, rx: 0., ry: 0., rz: 0., sx, sy, sz, color: "#888".into(), locked: false, hidden: false, metadata_json: "{}".into() }
+        CadObject {
+            id: id.into(),
+            parent_id: None,
+            name: id.into(),
+            kind: "box".into(),
+            x,
+            y,
+            z,
+            rx: 0.,
+            ry: 0.,
+            rz: 0.,
+            sx,
+            sy,
+            sz,
+            color: "#888".into(),
+            locked: false,
+            hidden: false,
+            metadata_json: "{}".into(),
+        }
     }
 
     #[test]

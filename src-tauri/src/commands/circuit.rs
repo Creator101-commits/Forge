@@ -1,14 +1,15 @@
 //! Circuit commands: CRUD for components, pins, wires, nets, ERC.
 
 use crate::app_state::AppState;
-use crate::circuit_ops::{self, CircuitComponent, CircuitPin, CircuitWire, CircuitNet, ErcIssue};
+use crate::circuit_ops::{self, CircuitComponent, CircuitNet, CircuitPin, CircuitWire, ErcIssue};
 use crate::errors::{ForgeError, Result};
 use crate::project_store as store;
 use std::path::PathBuf;
 use tauri::State;
 
 fn active_root(state: &AppState) -> Result<PathBuf> {
-    state.active_root()
+    state
+        .active_root()
         .ok_or_else(|| ForgeError::InvalidArgument("no active project".into()))
 }
 
@@ -25,19 +26,30 @@ pub fn circuit_list_components(state: State<'_, AppState>) -> Result<Vec<Circuit
     let mut stmt = conn.prepare(
         "SELECT id, ref_des, value, symbol_id, footprint_id, x, y, rotation, mirrored, mode FROM circuit_component"
     )?;
-    let rows = stmt.query_map([], |r| {
-        Ok(CircuitComponent {
-            id: r.get(0)?, ref_des: r.get(1)?, value: r.get(2)?,
-            symbol_id: r.get(3)?, footprint_id: r.get(4)?,
-            x: r.get(5)?, y: r.get(6)?, rotation: r.get(7)?,
-            mirrored: r.get::<_, i32>(8)? != 0, mode: r.get(9)?,
-        })
-    })?.collect::<std::result::Result<Vec<_>, _>>()?;
+    let rows = stmt
+        .query_map([], |r| {
+            Ok(CircuitComponent {
+                id: r.get(0)?,
+                ref_des: r.get(1)?,
+                value: r.get(2)?,
+                symbol_id: r.get(3)?,
+                footprint_id: r.get(4)?,
+                x: r.get(5)?,
+                y: r.get(6)?,
+                rotation: r.get(7)?,
+                mirrored: r.get::<_, i32>(8)? != 0,
+                mode: r.get(9)?,
+            })
+        })?
+        .collect::<std::result::Result<Vec<_>, _>>()?;
     Ok(rows)
 }
 
 #[tauri::command]
-pub fn circuit_add_component(state: State<'_, AppState>, comp: CircuitComponent) -> Result<CircuitComponent> {
+pub fn circuit_add_component(
+    state: State<'_, AppState>,
+    comp: CircuitComponent,
+) -> Result<CircuitComponent> {
     let root = active_root(&state)?;
     let conn = crate::db::open(&db_path(&root))?;
     conn.execute(
@@ -46,7 +58,11 @@ pub fn circuit_add_component(state: State<'_, AppState>, comp: CircuitComponent)
         rusqlite::params![comp.id, comp.ref_des, comp.value, comp.symbol_id,
             comp.footprint_id, comp.x, comp.y, comp.rotation, comp.mirrored as i32, comp.mode],
     )?;
-    store::append_event_at(&root, "circuit.add_component", &serde_json::to_value(&comp)?)?;
+    store::append_event_at(
+        &root,
+        "circuit.add_component",
+        &serde_json::to_value(&comp)?,
+    )?;
     Ok(comp)
 }
 
@@ -55,12 +71,19 @@ pub fn circuit_remove_component(state: State<'_, AppState>, id: String) -> Resul
     let root = active_root(&state)?;
     let conn = crate::db::open(&db_path(&root))?;
     conn.execute("DELETE FROM circuit_component WHERE id = ?1", [&id])?;
-    store::append_event_at(&root, "circuit.remove_component", &serde_json::json!({"id": id}))?;
+    store::append_event_at(
+        &root,
+        "circuit.remove_component",
+        &serde_json::json!({"id": id}),
+    )?;
     Ok(())
 }
 
 #[tauri::command]
-pub fn circuit_update_component(state: State<'_, AppState>, comp: CircuitComponent) -> Result<CircuitComponent> {
+pub fn circuit_update_component(
+    state: State<'_, AppState>,
+    comp: CircuitComponent,
+) -> Result<CircuitComponent> {
     let root = active_root(&state)?;
     let conn = crate::db::open(&db_path(&root))?;
     conn.execute(
@@ -68,7 +91,11 @@ pub fn circuit_update_component(state: State<'_, AppState>, comp: CircuitCompone
         rusqlite::params![comp.id, comp.ref_des, comp.value, comp.symbol_id,
             comp.footprint_id, comp.x, comp.y, comp.rotation, comp.mirrored as i32, comp.mode],
     )?;
-    store::append_event_at(&root, "circuit.update_component", &serde_json::to_value(&comp)?)?;
+    store::append_event_at(
+        &root,
+        "circuit.update_component",
+        &serde_json::to_value(&comp)?,
+    )?;
     Ok(comp)
 }
 
@@ -78,15 +105,21 @@ pub fn circuit_update_component(state: State<'_, AppState>, comp: CircuitCompone
 pub fn circuit_list_pins(state: State<'_, AppState>) -> Result<Vec<CircuitPin>> {
     let root = active_root(&state)?;
     let conn = crate::db::open(&db_path(&root))?;
-    let mut stmt = conn.prepare(
-        "SELECT id, component_id, name, number, x, y, electrical_type FROM circuit_pin"
-    )?;
-    let rows = stmt.query_map([], |r| {
-        Ok(CircuitPin {
-            id: r.get(0)?, component_id: r.get(1)?, name: r.get(2)?,
-            number: r.get(3)?, x: r.get(4)?, y: r.get(5)?, electrical_type: r.get(6)?,
-        })
-    })?.collect::<std::result::Result<Vec<_>, _>>()?;
+    let mut stmt = conn
+        .prepare("SELECT id, component_id, name, number, x, y, electrical_type FROM circuit_pin")?;
+    let rows = stmt
+        .query_map([], |r| {
+            Ok(CircuitPin {
+                id: r.get(0)?,
+                component_id: r.get(1)?,
+                name: r.get(2)?,
+                number: r.get(3)?,
+                x: r.get(4)?,
+                y: r.get(5)?,
+                electrical_type: r.get(6)?,
+            })
+        })?
+        .collect::<std::result::Result<Vec<_>, _>>()?;
     Ok(rows)
 }
 
@@ -108,14 +141,17 @@ pub fn circuit_list_wires(state: State<'_, AppState>) -> Result<Vec<CircuitWire>
     let root = active_root(&state)?;
     let conn = crate::db::open(&db_path(&root))?;
     let mut stmt = conn.prepare("SELECT id, net_id, points_json, mode FROM circuit_wire")?;
-    let rows = stmt.query_map([], |r| {
-        let pts: String = r.get(2)?;
-        Ok(CircuitWire {
-            id: r.get(0)?, net_id: r.get(1)?,
-            points: serde_json::from_str(&pts).unwrap_or_default(),
-            mode: r.get(3)?,
-        })
-    })?.collect::<std::result::Result<Vec<_>, _>>()?;
+    let rows = stmt
+        .query_map([], |r| {
+            let pts: String = r.get(2)?;
+            Ok(CircuitWire {
+                id: r.get(0)?,
+                net_id: r.get(1)?,
+                points: serde_json::from_str(&pts).unwrap_or_default(),
+                mode: r.get(3)?,
+            })
+        })?
+        .collect::<std::result::Result<Vec<_>, _>>()?;
     Ok(rows)
 }
 
@@ -146,9 +182,15 @@ pub fn circuit_list_nets(state: State<'_, AppState>) -> Result<Vec<CircuitNet>> 
     let root = active_root(&state)?;
     let conn = crate::db::open(&db_path(&root))?;
     let mut stmt = conn.prepare("SELECT id, name, class FROM circuit_net")?;
-    let rows = stmt.query_map([], |r| {
-        Ok(CircuitNet { id: r.get(0)?, name: r.get(1)?, class: r.get(2)? })
-    })?.collect::<std::result::Result<Vec<_>, _>>()?;
+    let rows = stmt
+        .query_map([], |r| {
+            Ok(CircuitNet {
+                id: r.get(0)?,
+                name: r.get(1)?,
+                class: r.get(2)?,
+            })
+        })?
+        .collect::<std::result::Result<Vec<_>, _>>()?;
     Ok(rows)
 }
 
@@ -172,33 +214,62 @@ pub fn circuit_run_erc(state: State<'_, AppState>) -> Result<Vec<ErcIssue>> {
 
     // Collect all circuit data
     let mut stmt = conn.prepare("SELECT id, ref_des, value, symbol_id, footprint_id, x, y, rotation, mirrored, mode FROM circuit_component")?;
-    let comps: Vec<CircuitComponent> = stmt.query_map([], |r| {
-        Ok(CircuitComponent {
-            id: r.get(0)?, ref_des: r.get(1)?, value: r.get(2)?,
-            symbol_id: r.get(3)?, footprint_id: r.get(4)?,
-            x: r.get(5)?, y: r.get(6)?, rotation: r.get(7)?,
-            mirrored: r.get::<_, i32>(8)? != 0, mode: r.get(9)?,
-        })
-    })?.collect::<std::result::Result<Vec<_>, _>>()?;
+    let comps: Vec<CircuitComponent> = stmt
+        .query_map([], |r| {
+            Ok(CircuitComponent {
+                id: r.get(0)?,
+                ref_des: r.get(1)?,
+                value: r.get(2)?,
+                symbol_id: r.get(3)?,
+                footprint_id: r.get(4)?,
+                x: r.get(5)?,
+                y: r.get(6)?,
+                rotation: r.get(7)?,
+                mirrored: r.get::<_, i32>(8)? != 0,
+                mode: r.get(9)?,
+            })
+        })?
+        .collect::<std::result::Result<Vec<_>, _>>()?;
 
-    let mut stmt = conn.prepare("SELECT id, component_id, name, number, x, y, electrical_type FROM circuit_pin")?;
-    let pins: Vec<CircuitPin> = stmt.query_map([], |r| {
-        Ok(CircuitPin {
-            id: r.get(0)?, component_id: r.get(1)?, name: r.get(2)?,
-            number: r.get(3)?, x: r.get(4)?, y: r.get(5)?, electrical_type: r.get(6)?,
-        })
-    })?.collect::<std::result::Result<Vec<_>, _>>()?;
+    let mut stmt = conn
+        .prepare("SELECT id, component_id, name, number, x, y, electrical_type FROM circuit_pin")?;
+    let pins: Vec<CircuitPin> = stmt
+        .query_map([], |r| {
+            Ok(CircuitPin {
+                id: r.get(0)?,
+                component_id: r.get(1)?,
+                name: r.get(2)?,
+                number: r.get(3)?,
+                x: r.get(4)?,
+                y: r.get(5)?,
+                electrical_type: r.get(6)?,
+            })
+        })?
+        .collect::<std::result::Result<Vec<_>, _>>()?;
 
     let mut stmt = conn.prepare("SELECT id, net_id, points_json, mode FROM circuit_wire")?;
-    let wires: Vec<CircuitWire> = stmt.query_map([], |r| {
-        let pts: String = r.get(2)?;
-        Ok(CircuitWire { id: r.get(0)?, net_id: r.get(1)?, points: serde_json::from_str(&pts).unwrap_or_default(), mode: r.get(3)? })
-    })?.collect::<std::result::Result<Vec<_>, _>>()?;
+    let wires: Vec<CircuitWire> = stmt
+        .query_map([], |r| {
+            let pts: String = r.get(2)?;
+            Ok(CircuitWire {
+                id: r.get(0)?,
+                net_id: r.get(1)?,
+                points: serde_json::from_str(&pts).unwrap_or_default(),
+                mode: r.get(3)?,
+            })
+        })?
+        .collect::<std::result::Result<Vec<_>, _>>()?;
 
     let mut stmt = conn.prepare("SELECT id, name, class FROM circuit_net")?;
-    let nets: Vec<CircuitNet> = stmt.query_map([], |r| {
-        Ok(CircuitNet { id: r.get(0)?, name: r.get(1)?, class: r.get(2)? })
-    })?.collect::<std::result::Result<Vec<_>, _>>()?;
+    let nets: Vec<CircuitNet> = stmt
+        .query_map([], |r| {
+            Ok(CircuitNet {
+                id: r.get(0)?,
+                name: r.get(1)?,
+                class: r.get(2)?,
+            })
+        })?
+        .collect::<std::result::Result<Vec<_>, _>>()?;
 
     Ok(circuit_ops::run_erc(&comps, &pins, &wires, &nets))
 }

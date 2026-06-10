@@ -1,7 +1,7 @@
 //! CAD commands: CRUD for scene objects and named views.
 
 use crate::app_state::AppState;
-use crate::cad_ops::{self, CadObject, CadCollision};
+use crate::cad_ops::{self, CadCollision, CadObject};
 use crate::errors::{ForgeError, Result};
 use crate::project_store as store;
 use std::path::PathBuf;
@@ -12,7 +12,8 @@ fn open_db(root: &std::path::Path) -> Result<rusqlite::Connection> {
 }
 
 fn active_root(state: &AppState) -> Result<PathBuf> {
-    state.active_root()
+    state
+        .active_root()
         .ok_or_else(|| ForgeError::InvalidArgument("no active project".into()))
 }
 
@@ -42,7 +43,8 @@ fn read_cad_objects(conn: &rusqlite::Connection) -> Result<Vec<CadObject>> {
             metadata_json: r.get(16)?,
         })
     })?;
-    rows.collect::<std::result::Result<Vec<_>, _>>().map_err(|e| e.into())
+    rows.collect::<std::result::Result<Vec<_>, _>>()
+        .map_err(|e| e.into())
 }
 
 #[tauri::command]
@@ -61,9 +63,23 @@ pub fn cad_add_object(state: State<'_, AppState>, obj: CadObject) -> Result<CadO
          sx, sy, sz, color, locked, hidden, metadata_json) \
          VALUES (?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11,?12,?13,?14,?15,?16,?17)",
         rusqlite::params![
-            obj.id, obj.parent_id, obj.name, obj.kind, obj.x, obj.y, obj.z,
-            obj.rx, obj.ry, obj.rz, obj.sx, obj.sy, obj.sz, obj.color,
-            obj.locked as i32, obj.hidden as i32, obj.metadata_json,
+            obj.id,
+            obj.parent_id,
+            obj.name,
+            obj.kind,
+            obj.x,
+            obj.y,
+            obj.z,
+            obj.rx,
+            obj.ry,
+            obj.rz,
+            obj.sx,
+            obj.sy,
+            obj.sz,
+            obj.color,
+            obj.locked as i32,
+            obj.hidden as i32,
+            obj.metadata_json,
         ],
     )?;
     store::append_event_at(&root, "cad.add_object", &serde_json::to_value(&obj)?)?;
@@ -79,13 +95,30 @@ pub fn cad_update_object(state: State<'_, AppState>, obj: CadObject) -> Result<C
          rx=?8, ry=?9, rz=?10, sx=?11, sy=?12, sz=?13, color=?14, locked=?15, \
          hidden=?16, metadata_json=?17 WHERE id=?1",
         rusqlite::params![
-            obj.id, obj.parent_id, obj.name, obj.kind, obj.x, obj.y, obj.z,
-            obj.rx, obj.ry, obj.rz, obj.sx, obj.sy, obj.sz, obj.color,
-            obj.locked as i32, obj.hidden as i32, obj.metadata_json,
+            obj.id,
+            obj.parent_id,
+            obj.name,
+            obj.kind,
+            obj.x,
+            obj.y,
+            obj.z,
+            obj.rx,
+            obj.ry,
+            obj.rz,
+            obj.sx,
+            obj.sy,
+            obj.sz,
+            obj.color,
+            obj.locked as i32,
+            obj.hidden as i32,
+            obj.metadata_json,
         ],
     )?;
     if n == 0 {
-        return Err(ForgeError::NotFound(format!("object '{}' not found", obj.id)));
+        return Err(ForgeError::NotFound(format!(
+            "object '{}' not found",
+            obj.id
+        )));
     }
     store::append_event_at(&root, "cad.update_object", &serde_json::to_value(&obj)?)?;
     Ok(obj)
