@@ -64,15 +64,19 @@ mod tests {
     #[test]
     fn emits_change_event_when_a_file_is_created() {
         let tmp = tempdir().unwrap();
-        let handle = spawn(tmp.path()).unwrap();
+        // Canonicalize so the watcher root and file write use the same resolved path
+        // as the OS reports in events. This ensures relativize() matches correctly.
+        let root = tmp
+            .path()
+            .canonicalize()
+            .unwrap_or_else(|_| tmp.path().to_path_buf());
+        let handle = spawn(&root).unwrap();
 
         // Give the watcher a moment to arm before mutating.
-        // Windows can be slower to register the watcher, so use a longer delay.
-        std::thread::sleep(Duration::from_millis(200));
-        write_file(tmp.path(), "main.ino", "void loop(){}").unwrap();
+        std::thread::sleep(Duration::from_millis(500));
+        write_file(&root, "main.ino", "void loop(){}").unwrap();
 
         // Collect events for up to ~5s; assert we observe our file.
-        // Windows may need more time for the event to propagate.
         let deadline = std::time::Instant::now() + Duration::from_secs(5);
         let mut saw = false;
         while std::time::Instant::now() < deadline {
