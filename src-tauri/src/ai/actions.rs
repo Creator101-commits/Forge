@@ -123,10 +123,8 @@ pub fn validate_action(action: &AiAction) -> Result<(), String> {
                 return Err("line numbers are 1-based".into());
             }
         }
-        AiAction::InsertBefore { line, .. } => {
-            if *line == 0 {
-                return Err("line numbers are 1-based".into());
-            }
+        AiAction::InsertBefore { line, .. } if *line == 0 => {
+            return Err("line numbers are 1-based".into());
         }
         _ => {}
     }
