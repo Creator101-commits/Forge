@@ -67,14 +67,16 @@ mod tests {
         let handle = spawn(tmp.path()).unwrap();
 
         // Give the watcher a moment to arm before mutating.
-        std::thread::sleep(Duration::from_millis(50));
+        // Windows can be slower to register the watcher, so use a longer delay.
+        std::thread::sleep(Duration::from_millis(200));
         write_file(tmp.path(), "main.ino", "void loop(){}").unwrap();
 
-        // Collect events for up to ~2s; assert we observe our file.
-        let deadline = std::time::Instant::now() + Duration::from_secs(2);
+        // Collect events for up to ~5s; assert we observe our file.
+        // Windows may need more time for the event to propagate.
+        let deadline = std::time::Instant::now() + Duration::from_secs(5);
         let mut saw = false;
         while std::time::Instant::now() < deadline {
-            if let Ok(change) = handle.rx.recv_timeout(Duration::from_millis(200)) {
+            if let Ok(change) = handle.rx.recv_timeout(Duration::from_millis(500)) {
                 if change.paths.iter().any(|p| p.ends_with("main.ino")) {
                     saw = true;
                     break;
