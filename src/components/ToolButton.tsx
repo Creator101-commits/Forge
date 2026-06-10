@@ -14,7 +14,7 @@ export function ToolButton({
     <button
       className={clsx(
         "rounded-1 p-1.5 transition-colors",
-        active ? "bg-accent/15 text-accent" : "text-text-3 hover:text-text-1"
+        active ? "bg-accent/15 text-accent" : "text-text-3 hover:text-text-1",
       )}
       title={label}
     >

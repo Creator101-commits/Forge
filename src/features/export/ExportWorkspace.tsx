@@ -10,12 +10,48 @@ interface ExportTarget {
 }
 
 const TARGETS: ExportTarget[] = [
-  { id: "bom-csv", label: "BOM (CSV)", icon: FileCode, description: "Bill of materials as CSV spreadsheet", format: ".csv" },
-  { id: "bom-pdf", label: "BOM (PDF)", icon: FileCode, description: "Bill of materials as PDF document", format: ".pdf" },
-  { id: "schematic-svg", label: "Schematic (SVG)", icon: FileImage, description: "Vector schematic diagram", format: ".svg" },
-  { id: "pcb-gerber", label: "PCB Gerbers", icon: FileArchive, description: "Manufacturing files (RS-274X)", format: ".zip" },
-  { id: "cad-screenshot", label: "CAD Screenshot", icon: FileImage, description: "Viewport screenshot at current camera", format: ".png" },
-  { id: "project-bundle", label: "Project Bundle", icon: Package, description: "Complete project archive with sources", format: ".zip" },
+  {
+    id: "bom-csv",
+    label: "BOM (CSV)",
+    icon: FileCode,
+    description: "Bill of materials as CSV spreadsheet",
+    format: ".csv",
+  },
+  {
+    id: "bom-pdf",
+    label: "BOM (PDF)",
+    icon: FileCode,
+    description: "Bill of materials as PDF document",
+    format: ".pdf",
+  },
+  {
+    id: "schematic-svg",
+    label: "Schematic (SVG)",
+    icon: FileImage,
+    description: "Vector schematic diagram",
+    format: ".svg",
+  },
+  {
+    id: "pcb-gerber",
+    label: "PCB Gerbers",
+    icon: FileArchive,
+    description: "Manufacturing files (RS-274X)",
+    format: ".zip",
+  },
+  {
+    id: "cad-screenshot",
+    label: "CAD Screenshot",
+    icon: FileImage,
+    description: "Viewport screenshot at current camera",
+    format: ".png",
+  },
+  {
+    id: "project-bundle",
+    label: "Project Bundle",
+    icon: Package,
+    description: "Complete project archive with sources",
+    format: ".zip",
+  },
 ];
 
 export function ExportWorkspace() {
@@ -31,7 +67,10 @@ export function ExportWorkspace() {
   };
 
   return (
-    <section data-testid="workspace-export" className="mx-auto flex h-full w-full max-w-2xl flex-col gap-4 overflow-auto p-8">
+    <section
+      data-testid="workspace-export"
+      className="mx-auto flex h-full w-full max-w-2xl flex-col gap-4 overflow-auto p-8"
+    >
       <header className="flex flex-col gap-1">
         <h1 className="font-display text-xl text-text-1">Export</h1>
         <p className="text-sm text-text-3">Generate manufacturing and documentation artifacts.</p>
@@ -74,7 +113,8 @@ export function ExportWorkspace() {
       </div>
 
       <p className="text-xs text-text-3">
-        Exports are saved to the project's <code className="rounded-1 bg-bg-2 px-1">exports/</code> folder.
+        Exports are saved to the project&apos;s{" "}
+        <code className="rounded-1 bg-bg-2 px-1">exports/</code> folder.
       </p>
     </section>
   );

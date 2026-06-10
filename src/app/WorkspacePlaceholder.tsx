@@ -10,7 +10,8 @@ const COMING_SOON: Record<WorkspaceId, string> = {
   bom: "BOM table, sourcing, export — wired in M8.",
   ai: "Pluggable AI dock (OpenAI / Anthropic / Ollama / OpenAI-compatible) — wired in M3.",
   export: "Full export pipeline — wired in M8.",
-  compile: "Compile & Upload workspace with board picker, toolchain detection, and serial flashing — wired in M9.",
+  compile:
+    "Compile & Upload workspace with board picker, toolchain detection, and serial flashing — wired in M9.",
   settings: "Settings (general/appearance/AI/keys) — wired in M1+M3.",
 };
 

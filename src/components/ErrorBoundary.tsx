@@ -9,11 +9,9 @@ interface State {
 }
 
 export class ErrorBoundary extends Component<Props, State> {
-  // @ts-ignore - @types/react@18.3.12 doesn't declare state with override
   override state: State = { error: null };
 
-  // @ts-ignore - static method override support inconsistent in @types/react@18.3.12
-  static override getDerivedStateFromError(error: Error): State {
+  static getDerivedStateFromError(error: Error): State {
     return { error };
   }
 
@@ -30,9 +28,7 @@ export class ErrorBoundary extends Component<Props, State> {
               <div className="rounded-1 bg-warn/15 px-2 py-0.5 text-[10px] text-warn font-medium">
                 Something went wrong
               </div>
-              <p className="max-w-md text-xs text-text-2">
-                {this.state.error.message}
-              </p>
+              <p className="max-w-md text-xs text-text-2">{this.state.error.message}</p>
               <button
                 onClick={() => this.setState({ error: null })}
                 className="btn-secondary px-3 py-1 text-xs"

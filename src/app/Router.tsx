@@ -14,16 +14,36 @@ import { ErrorBoundary } from "@/components/ErrorBoundary";
  * All lazy() calls are at module top-level (React requirement).
  */
 
-const LazyDashboard = lazy(() => import("@/features/dashboard/Dashboard").then((m) => ({ default: m.Dashboard })));
-const LazyCad = lazy(() => import("@/features/cad/CadWorkspace").then((m) => ({ default: m.CadWorkspace })));
-const LazyCircuit = lazy(() => import("@/features/circuit/CircuitWorkspace").then((m) => ({ default: m.CircuitWorkspace })));
-const LazyPcb = lazy(() => import("@/features/pcb/PcbWorkspace").then((m) => ({ default: m.PcbWorkspace })));
-const LazyCode = lazy(() => import("@/features/code/CodeWorkspace").then((m) => ({ default: m.CodeWorkspace })));
-const LazyBom = lazy(() => import("@/features/bom/BomWorkspace").then((m) => ({ default: m.BomWorkspace })));
-const LazyAi = lazy(() => import("@/features/ai/AiWorkspace").then((m) => ({ default: m.AiWorkspace })));
-const LazyExport = lazy(() => import("@/features/export/ExportWorkspace").then((m) => ({ default: m.ExportWorkspace })));
-const LazyCompile = lazy(() => import("@/features/compile/CompileWorkspace").then((m) => ({ default: m.CompileWorkspace })));
-const LazySettings = lazy(() => import("@/features/settings/SettingsWorkspace").then((m) => ({ default: m.SettingsWorkspace })));
+const LazyDashboard = lazy(() =>
+  import("@/features/dashboard/Dashboard").then((m) => ({ default: m.Dashboard })),
+);
+const LazyCad = lazy(() =>
+  import("@/features/cad/CadWorkspace").then((m) => ({ default: m.CadWorkspace })),
+);
+const LazyCircuit = lazy(() =>
+  import("@/features/circuit/CircuitWorkspace").then((m) => ({ default: m.CircuitWorkspace })),
+);
+const LazyPcb = lazy(() =>
+  import("@/features/pcb/PcbWorkspace").then((m) => ({ default: m.PcbWorkspace })),
+);
+const LazyCode = lazy(() =>
+  import("@/features/code/CodeWorkspace").then((m) => ({ default: m.CodeWorkspace })),
+);
+const LazyBom = lazy(() =>
+  import("@/features/bom/BomWorkspace").then((m) => ({ default: m.BomWorkspace })),
+);
+const LazyAi = lazy(() =>
+  import("@/features/ai/AiWorkspace").then((m) => ({ default: m.AiWorkspace })),
+);
+const LazyExport = lazy(() =>
+  import("@/features/export/ExportWorkspace").then((m) => ({ default: m.ExportWorkspace })),
+);
+const LazyCompile = lazy(() =>
+  import("@/features/compile/CompileWorkspace").then((m) => ({ default: m.CompileWorkspace })),
+);
+const LazySettings = lazy(() =>
+  import("@/features/settings/SettingsWorkspace").then((m) => ({ default: m.SettingsWorkspace })),
+);
 
 const COMPONENTS: Partial<Record<WorkspaceId, ComponentType>> = {
   dashboard: LazyDashboard,

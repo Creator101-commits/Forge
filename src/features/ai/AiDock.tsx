@@ -53,13 +53,15 @@ export function AiDock() {
 
   // Try to parse actions from stream content for action cards
   const tryParseAction = (text: string): { action: AiAction; json: string } | null => {
-    const match = text.match(/```json\s*\n?(\{[\s\S]*?\"kind\"[\s\S]*?\})\s*\n?```/);
+    const match = text.match(/```json\s*\n?(\{[\s\S]*?"kind"[\s\S]*?\})\s*\n?```/);
     if (!match) return null;
     try {
       const json = match[1]!;
       const parsed = JSON.parse(json);
       if (parsed.kind && parsed.path) return { action: parsed as AiAction, json };
-    } catch {}
+    } catch {
+      // ignore parse errors
+    }
     return null;
   };
 
@@ -89,7 +91,9 @@ export function AiDock() {
         >
           <option value="">Select model</option>
           {models.map((m) => (
-            <option key={m} value={m}>{m}</option>
+            <option key={m} value={m}>
+              {m}
+            </option>
           ))}
         </select>
         <div className="flex-1" />
@@ -114,23 +118,20 @@ export function AiDock() {
         )}
         <div className="flex flex-col gap-2">
           {messages.map((msg, i) => (
-            <div key={i} className={clsx("flex gap-2 text-xs", msg.role === "user" ? "justify-end" : "")}>
-              {msg.role !== "user" && (
-                <Bot className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
-              )}
+            <div
+              key={i}
+              className={clsx("flex gap-2 text-xs", msg.role === "user" ? "justify-end" : "")}
+            >
+              {msg.role !== "user" && <Bot className="mt-0.5 h-4 w-4 shrink-0 text-accent" />}
               <div
                 className={clsx(
                   "max-w-[85%] rounded-2 px-2.5 py-1.5",
-                  msg.role === "user"
-                    ? "bg-accent/15 text-text-1"
-                    : "bg-surface-2 text-text-2",
+                  msg.role === "user" ? "bg-accent/15 text-text-1" : "bg-surface-2 text-text-2",
                 )}
               >
                 <div className="whitespace-pre-wrap break-words">{msg.content}</div>
               </div>
-              {msg.role === "user" && (
-                <User className="mt-0.5 h-4 w-4 shrink-0 text-text-3" />
-              )}
+              {msg.role === "user" && <User className="mt-0.5 h-4 w-4 shrink-0 text-text-3" />}
             </div>
           ))}
 
@@ -139,9 +140,7 @@ export function AiDock() {
             <div className="flex gap-2 text-xs">
               <Bot className="mt-0.5 h-4 w-4 shrink-0 text-accent animate-pulse" />
               <div className="max-w-[85%] rounded-2 bg-surface-2 px-2.5 py-1.5 text-text-2">
-                <div className="whitespace-pre-wrap break-words">
-                  {streamContent || "..."}
-                </div>
+                <div className="whitespace-pre-wrap break-words">{streamContent || "..."}</div>
               </div>
             </div>
           )}
@@ -155,7 +154,9 @@ export function AiDock() {
                 if (parsed) {
                   try {
                     await applyAction(parsed.action);
-                  } catch {}
+                  } catch {
+                    // ignore apply errors
+                  }
                 }
               }}
             />
@@ -209,7 +210,12 @@ export function AiDock() {
         />
         <button
           onClick={handleSend}
-          disabled={(!input.trim() as boolean) || (streaming as boolean) || !selectedProvider || !selectedModel}
+          disabled={
+            (!input.trim() as boolean) ||
+            (streaming as boolean) ||
+            !selectedProvider ||
+            !selectedModel
+          }
           className="btn-accent flex items-center gap-1 px-3 py-2 text-xs"
         >
           <Send className="h-3 w-3" />
@@ -219,22 +225,21 @@ export function AiDock() {
   );
 }
 
-function ActionCard({
-  action,
-  onApply,
-}: {
-  action: AiAction;
-  onApply: () => void;
-}) {
+function ActionCard({ action, onApply }: { action: AiAction; onApply: () => void }) {
   const [applied, setApplied] = useState(false);
 
   const description = (() => {
     switch (action.kind) {
-      case "createFile": return `Create file: ${action.path}`;
-      case "updateFile": return `Update file: ${action.path}`;
-      case "deleteFile": return `Delete file: ${action.path}`;
-      case "patchRange": return `Patch ${action.path} lines ${action.startLine}-${action.endLine}`;
-      case "insertBefore": return `Insert before line ${action.line} in ${action.path}`;
+      case "createFile":
+        return `Create file: ${action.path}`;
+      case "updateFile":
+        return `Update file: ${action.path}`;
+      case "deleteFile":
+        return `Delete file: ${action.path}`;
+      case "patchRange":
+        return `Patch ${action.path} lines ${action.startLine}-${action.endLine}`;
+      case "insertBefore":
+        return `Insert before line ${action.line} in ${action.path}`;
     }
   })();
 
@@ -245,7 +250,10 @@ function ActionCard({
         {!applied ? (
           <div className="flex gap-1">
             <button
-              onClick={() => { void onApply(); setApplied(true); }}
+              onClick={() => {
+                void onApply();
+                setApplied(true);
+              }}
               className="flex items-center gap-1 rounded-1 bg-ok/20 px-2 py-0.5 text-[10px] text-ok hover:bg-ok/30"
             >
               <Check className="h-3 w-3" /> Apply

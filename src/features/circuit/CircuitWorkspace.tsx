@@ -15,10 +15,7 @@ export function CircuitWorkspace() {
   ];
 
   return (
-    <section
-      data-testid="workspace-circuit"
-      className="flex h-full flex-col bg-bg-1"
-    >
+    <section data-testid="workspace-circuit" className="flex h-full flex-col bg-bg-1">
       {/* Toolbar */}
       <div className="flex items-center gap-1 border-b border-border-1 px-2 py-1">
         {/* Mode switcher */}
@@ -29,7 +26,7 @@ export function CircuitWorkspace() {
               onClick={() => setMode(m.id)}
               className={clsx(
                 "rounded-1 px-2 py-0.5 text-[11px] transition-colors",
-                mode === m.id ? "bg-accent text-[#04211d]" : "text-text-3 hover:text-text-1"
+                mode === m.id ? "bg-accent text-[#04211d]" : "text-text-3 hover:text-text-1",
               )}
             >
               {m.label}
@@ -67,18 +64,26 @@ export function CircuitWorkspace() {
         <span className="flex items-center gap-1">
           <AlertTriangle className="h-3 w-3" /> 0 ERC issues
         </span>
-        <span>Grid: 0.1"</span>
+        <span>Grid: 0.1&quot;</span>
       </div>
     </section>
   );
 }
 
-function ToolButton({ icon: Icon, label, active }: { icon: typeof MousePointer2; label: string; active?: boolean }) {
+function ToolButton({
+  icon: Icon,
+  label,
+  active,
+}: {
+  icon: typeof MousePointer2;
+  label: string;
+  active?: boolean;
+}) {
   return (
     <button
       className={clsx(
         "rounded-1 p-1.5 transition-colors",
-        active ? "bg-accent/15 text-accent" : "text-text-3 hover:text-text-1"
+        active ? "bg-accent/15 text-accent" : "text-text-3 hover:text-text-1",
       )}
       title={label}
     >

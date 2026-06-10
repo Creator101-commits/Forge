@@ -1,6 +1,15 @@
 import { useState } from "react";
 import { clsx } from "clsx";
-import { MousePointer2, PenLine, Plus, Trash2, AlertTriangle, Grid3X3, Eye, EyeOff } from "lucide-react";
+import {
+  MousePointer2,
+  PenLine,
+  Plus,
+  Trash2,
+  AlertTriangle,
+  Grid3X3,
+  Eye,
+  EyeOff,
+} from "lucide-react";
 
 const LAYERS = ["Top Copper", "Bottom Copper", "Silkscreen", "Soldermask", "Outline", "Drills"];
 
@@ -10,7 +19,8 @@ export function PcbWorkspace() {
 
   const toggleLayer = (layer: string) => {
     const next = new Set(visibleLayers);
-    if (next.has(layer)) next.delete(layer); else next.add(layer);
+    if (next.has(layer)) next.delete(layer);
+    else next.add(layer);
     setVisibleLayers(next);
   };
 
@@ -40,11 +50,21 @@ export function PcbWorkspace() {
               onClick={() => setActiveLayer(l)}
               className={clsx(
                 "flex items-center gap-1.5 rounded-1 px-2 py-1 text-[11px] text-left transition-colors",
-                activeLayer === l ? "bg-accent/15 text-accent" : "text-text-2 hover:bg-surface-1"
+                activeLayer === l ? "bg-accent/15 text-accent" : "text-text-2 hover:bg-surface-1",
               )}
             >
-              <button onClick={(e) => { e.stopPropagation(); toggleLayer(l); }} className="p-0.5">
-                {visibleLayers.has(l) ? <Eye className="h-3 w-3" /> : <EyeOff className="h-3 w-3 opacity-50" />}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleLayer(l);
+                }}
+                className="p-0.5"
+              >
+                {visibleLayers.has(l) ? (
+                  <Eye className="h-3 w-3" />
+                ) : (
+                  <EyeOff className="h-3 w-3 opacity-50" />
+                )}
               </button>
               <span className={visibleLayers.has(l) ? "" : "opacity-50"}>{l}</span>
             </button>
@@ -61,7 +81,16 @@ export function PcbWorkspace() {
                 </pattern>
               </defs>
               <rect width="300" height="200" fill="url(#pcb-grid)" />
-              <rect x="60" y="30" width="180" height="140" rx="4" fill="none" stroke="currentColor" strokeWidth="1" />
+              <rect
+                x="60"
+                y="30"
+                width="180"
+                height="140"
+                rx="4"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1"
+              />
             </svg>
             <div className="text-center text-xs">
               <p className="text-text-2 font-medium">PCB Editor</p>
@@ -74,16 +103,32 @@ export function PcbWorkspace() {
 
       <div className="flex items-center gap-3 border-t border-border-1 px-3 py-1 text-[11px] text-text-3">
         <span>Board: 50×30mm</span>
-        <span className="flex items-center gap-1"><AlertTriangle className="h-3 w-3" /> 0 DRC issues</span>
+        <span className="flex items-center gap-1">
+          <AlertTriangle className="h-3 w-3" /> 0 DRC issues
+        </span>
         <span>Grid: 0.1mm</span>
       </div>
     </section>
   );
 }
 
-function ToolButton({ icon: Icon, label, active }: { icon: typeof MousePointer2; label: string; active?: boolean }) {
+function ToolButton({
+  icon: Icon,
+  label,
+  active,
+}: {
+  icon: typeof MousePointer2;
+  label: string;
+  active?: boolean;
+}) {
   return (
-    <button className={clsx("rounded-1 p-1.5 transition-colors", active ? "bg-accent/15 text-accent" : "text-text-3 hover:text-text-1")} title={label}>
+    <button
+      className={clsx(
+        "rounded-1 p-1.5 transition-colors",
+        active ? "bg-accent/15 text-accent" : "text-text-3 hover:text-text-1",
+      )}
+      title={label}
+    >
       <Icon className="h-3.5 w-3.5" />
     </button>
   );

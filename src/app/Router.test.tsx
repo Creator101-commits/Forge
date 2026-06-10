@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import { render, screen, act } from "@testing-library/react";
+import { render, screen, act, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 vi.mock("@/lib/ipc", () => ({
@@ -45,23 +45,28 @@ beforeEach(() => {
   });
 });
 
+async function waitForWorkspace(testId: string) {
+  await waitFor(() => expect(screen.getByTestId(testId)).toBeInTheDocument());
+}
+
 describe("Router", () => {
-  it("renders the registered component for the active workspace", () => {
+  it("renders the registered component for the active workspace", async () => {
     useUiStore.setState({ activeWorkspace: "settings" });
     render(<Harness />);
-    expect(screen.getByTestId("workspace-settings")).toBeInTheDocument();
+    await waitForWorkspace("workspace-settings");
   });
 
-  it("falls back to the placeholder for unimplemented workspaces", () => {
+  it("falls back to the placeholder for unimplemented workspaces", async () => {
     useUiStore.setState({ activeWorkspace: "cad" });
     render(<Harness />);
-    expect(screen.getByTestId("workspace-cad")).toBeInTheDocument();
+    await waitForWorkspace("workspace-cad");
   });
 
   it("preserves workspace state across CAD <-> Code <-> Settings switches", async () => {
     const user = userEvent.setup();
     useUiStore.setState({ activeWorkspace: "settings" });
     render(<Harness />);
+    await waitForWorkspace("workspace-settings");
 
     // Change a Settings value (lives in the settings store).
     await user.click(screen.getByRole("button", { name: "Light" }));
@@ -69,14 +74,15 @@ describe("Router", () => {
 
     // Navigate away to Code, then CAD — Settings unmounts.
     act(() => useUiStore.getState().setActiveWorkspace("code"));
-    expect(screen.getByTestId("workspace-code")).toBeInTheDocument();
+    await waitForWorkspace("workspace-code");
     expect(screen.queryByTestId("workspace-settings")).not.toBeInTheDocument();
 
     act(() => useUiStore.getState().setActiveWorkspace("cad"));
-    expect(screen.getByTestId("workspace-cad")).toBeInTheDocument();
+    await waitForWorkspace("workspace-cad");
 
     // Back to Settings: the previously chosen theme survived the remount.
     act(() => useUiStore.getState().setActiveWorkspace("settings"));
+    await waitForWorkspace("workspace-settings");
     expect(useSettingsStore.getState().settings.theme).toBe("light");
     expect(screen.getByRole("button", { name: "Light" })).toHaveAttribute("aria-pressed", "true");
   });

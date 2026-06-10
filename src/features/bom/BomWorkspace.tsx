@@ -2,16 +2,51 @@ import { useState } from "react";
 import { Download, Search, AlertTriangle, DollarSign } from "lucide-react";
 
 const MOCK_ROWS = [
-  { ref: "R1,R2", value: "10kΩ", package_: "0805", desc: "Resistor", qty: 2, price: 0.02, total: 0.04 },
-  { ref: "C1,C2,C3", value: "100nF", package_: "0603", desc: "Ceramic capacitor", qty: 3, price: 0.05, total: 0.15 },
-  { ref: "U1", value: "ATmega328P", package_: "DIP-28", desc: "Microcontroller", qty: 1, price: 2.50, total: 2.50 },
-  { ref: "J1", value: "Header 6-pin", package_: "2.54mm", desc: "Pin header", qty: 1, price: 0.30, total: 0.30 },
+  {
+    ref: "R1,R2",
+    value: "10kΩ",
+    package_: "0805",
+    desc: "Resistor",
+    qty: 2,
+    price: 0.02,
+    total: 0.04,
+  },
+  {
+    ref: "C1,C2,C3",
+    value: "100nF",
+    package_: "0603",
+    desc: "Ceramic capacitor",
+    qty: 3,
+    price: 0.05,
+    total: 0.15,
+  },
+  {
+    ref: "U1",
+    value: "ATmega328P",
+    package_: "DIP-28",
+    desc: "Microcontroller",
+    qty: 1,
+    price: 2.5,
+    total: 2.5,
+  },
+  {
+    ref: "J1",
+    value: "Header 6-pin",
+    package_: "2.54mm",
+    desc: "Pin header",
+    qty: 1,
+    price: 0.3,
+    total: 0.3,
+  },
 ];
 
 export function BomWorkspace() {
   const [filter, setFilter] = useState("");
-  const rows = MOCK_ROWS.filter((r) =>
-    !filter || r.value.toLowerCase().includes(filter.toLowerCase()) || r.desc.toLowerCase().includes(filter.toLowerCase())
+  const rows = MOCK_ROWS.filter(
+    (r) =>
+      !filter ||
+      r.value.toLowerCase().includes(filter.toLowerCase()) ||
+      r.desc.toLowerCase().includes(filter.toLowerCase()),
   );
 
   return (
@@ -35,7 +70,9 @@ export function BomWorkspace() {
           <thead className="sticky top-0 bg-bg-2 text-text-3 uppercase tracking-wider text-[10px]">
             <tr>
               {["Ref", "Value", "Package", "Description", "Qty", "Unit $", "Total $"].map((h) => (
-                <th key={h} className="text-left px-3 py-1.5 border-b border-border-1 font-normal">{h}</th>
+                <th key={h} className="text-left px-3 py-1.5 border-b border-border-1 font-normal">
+                  {h}
+                </th>
               ))}
             </tr>
           </thead>
@@ -54,14 +91,21 @@ export function BomWorkspace() {
           </tbody>
         </table>
         {rows.length === 0 && (
-          <div className="flex items-center justify-center py-12 text-text-3 text-xs">No BOM items match the filter.</div>
+          <div className="flex items-center justify-center py-12 text-text-3 text-xs">
+            No BOM items match the filter.
+          </div>
         )}
       </div>
 
       <div className="flex items-center gap-3 border-t border-border-1 px-3 py-1 text-[11px] text-text-3">
-        <span className="flex items-center gap-1"><DollarSign className="h-3 w-3" /> Total: ${rows.reduce((s, r) => s + r.total, 0).toFixed(2)}</span>
+        <span className="flex items-center gap-1">
+          <DollarSign className="h-3 w-3" /> Total: $
+          {rows.reduce((s, r) => s + r.total, 0).toFixed(2)}
+        </span>
         <span>{rows.length} unique parts</span>
-        <span className="flex items-center gap-1"><AlertTriangle className="h-3 w-3" /> 0 sourcing warnings</span>
+        <span className="flex items-center gap-1">
+          <AlertTriangle className="h-3 w-3" /> 0 sourcing warnings
+        </span>
       </div>
     </section>
   );

@@ -229,7 +229,11 @@ function AiProviderSection() {
                 <label className="flex flex-col gap-1 text-xs text-text-3">
                   Base URL{p.id === "openai-compat" ? " (required)" : " (optional)"}
                   <input
-                    placeholder={p.id === "ollama" ? "http://localhost:11434/api" : "https://api.example.com/v1"}
+                    placeholder={
+                      p.id === "ollama"
+                        ? "http://localhost:11434/api"
+                        : "https://api.example.com/v1"
+                    }
                     value={baseUrls[p.id] ?? ""}
                     onChange={(e) => setBaseUrls({ ...baseUrls, [p.id]: e.target.value })}
                     className="input font-mono"
@@ -262,7 +266,9 @@ function AiProviderSection() {
                     {testing[p.id] ? (
                       <Loader2 className="h-3 w-3 animate-spin" />
                     ) : results[p.id] !== undefined ? (
-                      <Check className={clsx("h-3 w-3", results[p.id] ? "text-ok" : "text-error")} />
+                      <Check
+                        className={clsx("h-3 w-3", results[p.id] ? "text-ok" : "text-error")}
+                      />
                     ) : null}
                     Test Connection
                   </button>

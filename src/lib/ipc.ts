@@ -241,7 +241,11 @@ export async function aiListProviders(): Promise<AiProviderInfo[]> {
   return invoke<AiProviderInfo[]>("ai_list_providers");
 }
 
-export async function aiSetProvider(providerId: string, apiKey: string, baseUrl?: string): Promise<AiProviderInfo> {
+export async function aiSetProvider(
+  providerId: string,
+  apiKey: string,
+  baseUrl?: string,
+): Promise<AiProviderInfo> {
   return invoke<AiProviderInfo>("ai_set_provider", { providerId, apiKey, baseUrl });
 }
 
@@ -404,21 +408,51 @@ export interface DrcIssue {
   position?: [number, number] | null;
 }
 
-export async function pcbListLayers(): Promise<PcbLayer[]> { return invoke<PcbLayer[]>("pcb_list_layers"); }
-export async function pcbAddLayer(layer: PcbLayer): Promise<PcbLayer> { return invoke<PcbLayer>("pcb_add_layer", { layer }); }
-export async function pcbListFootprints(): Promise<PcbFootprint[]> { return invoke<PcbFootprint[]>("pcb_list_footprints"); }
-export async function pcbAddFootprint(fp: PcbFootprint): Promise<PcbFootprint> { return invoke<PcbFootprint>("pcb_add_footprint", { fp }); }
-export async function pcbRemoveFootprint(id: string): Promise<void> { return invoke<void>("pcb_remove_footprint", { id }); }
-export async function pcbListPads(): Promise<PcbPad[]> { return invoke<PcbPad[]>("pcb_list_pads"); }
-export async function pcbAddPad(pad: PcbPad): Promise<PcbPad> { return invoke<PcbPad>("pcb_add_pad", { pad }); }
-export async function pcbListTraces(): Promise<PcbTrace[]> { return invoke<PcbTrace[]>("pcb_list_traces"); }
-export async function pcbAddTrace(trace: PcbTrace): Promise<PcbTrace> { return invoke<PcbTrace>("pcb_add_trace", { trace }); }
-export async function pcbRemoveTrace(id: string): Promise<void> { return invoke<void>("pcb_remove_trace", { id }); }
-export async function pcbListVias(): Promise<PcbVia[]> { return invoke<PcbVia[]>("pcb_list_vias"); }
-export async function pcbAddVia(via: PcbVia): Promise<PcbVia> { return invoke<PcbVia>("pcb_add_via", { via }); }
-export async function pcbListZones(): Promise<PcbZone[]> { return invoke<PcbZone[]>("pcb_list_zones"); }
-export async function pcbAddZone(zone: PcbZone): Promise<PcbZone> { return invoke<PcbZone>("pcb_add_zone", { zone }); }
-export async function pcbRunDrc(): Promise<DrcIssue[]> { return invoke<DrcIssue[]>("pcb_run_drc"); }
+export async function pcbListLayers(): Promise<PcbLayer[]> {
+  return invoke<PcbLayer[]>("pcb_list_layers");
+}
+export async function pcbAddLayer(layer: PcbLayer): Promise<PcbLayer> {
+  return invoke<PcbLayer>("pcb_add_layer", { layer });
+}
+export async function pcbListFootprints(): Promise<PcbFootprint[]> {
+  return invoke<PcbFootprint[]>("pcb_list_footprints");
+}
+export async function pcbAddFootprint(fp: PcbFootprint): Promise<PcbFootprint> {
+  return invoke<PcbFootprint>("pcb_add_footprint", { fp });
+}
+export async function pcbRemoveFootprint(id: string): Promise<void> {
+  return invoke<void>("pcb_remove_footprint", { id });
+}
+export async function pcbListPads(): Promise<PcbPad[]> {
+  return invoke<PcbPad[]>("pcb_list_pads");
+}
+export async function pcbAddPad(pad: PcbPad): Promise<PcbPad> {
+  return invoke<PcbPad>("pcb_add_pad", { pad });
+}
+export async function pcbListTraces(): Promise<PcbTrace[]> {
+  return invoke<PcbTrace[]>("pcb_list_traces");
+}
+export async function pcbAddTrace(trace: PcbTrace): Promise<PcbTrace> {
+  return invoke<PcbTrace>("pcb_add_trace", { trace });
+}
+export async function pcbRemoveTrace(id: string): Promise<void> {
+  return invoke<void>("pcb_remove_trace", { id });
+}
+export async function pcbListVias(): Promise<PcbVia[]> {
+  return invoke<PcbVia[]>("pcb_list_vias");
+}
+export async function pcbAddVia(via: PcbVia): Promise<PcbVia> {
+  return invoke<PcbVia>("pcb_add_via", { via });
+}
+export async function pcbListZones(): Promise<PcbZone[]> {
+  return invoke<PcbZone[]>("pcb_list_zones");
+}
+export async function pcbAddZone(zone: PcbZone): Promise<PcbZone> {
+  return invoke<PcbZone>("pcb_add_zone", { zone });
+}
+export async function pcbRunDrc(): Promise<DrcIssue[]> {
+  return invoke<DrcIssue[]>("pcb_run_drc");
+}
 
 // ----- M7 CAD command surface -----
 
@@ -427,9 +461,15 @@ export interface CadObject {
   parentId?: string | null;
   name: string;
   kind: string;
-  x: number; y: number; z: number;
-  rx: number; ry: number; rz: number;
-  sx: number; sy: number; sz: number;
+  x: number;
+  y: number;
+  z: number;
+  rx: number;
+  ry: number;
+  rz: number;
+  sx: number;
+  sy: number;
+  sz: number;
   color: string;
   locked: boolean;
   hidden: boolean;
@@ -442,11 +482,21 @@ export interface CadCollision {
   overlapMm: number;
 }
 
-export async function cadListObjects(): Promise<CadObject[]> { return invoke<CadObject[]>("cad_list_objects"); }
-export async function cadAddObject(obj: CadObject): Promise<CadObject> { return invoke<CadObject>("cad_add_object", { obj }); }
-export async function cadUpdateObject(obj: CadObject): Promise<CadObject> { return invoke<CadObject>("cad_update_object", { obj }); }
-export async function cadRemoveObject(id: string): Promise<void> { return invoke<void>("cad_remove_object", { id }); }
-export async function cadDetectCollisions(): Promise<CadCollision[]> { return invoke<CadCollision[]>("cad_detect_collisions"); }
+export async function cadListObjects(): Promise<CadObject[]> {
+  return invoke<CadObject[]>("cad_list_objects");
+}
+export async function cadAddObject(obj: CadObject): Promise<CadObject> {
+  return invoke<CadObject>("cad_add_object", { obj });
+}
+export async function cadUpdateObject(obj: CadObject): Promise<CadObject> {
+  return invoke<CadObject>("cad_update_object", { obj });
+}
+export async function cadRemoveObject(id: string): Promise<void> {
+  return invoke<void>("cad_remove_object", { id });
+}
+export async function cadDetectCollisions(): Promise<CadCollision[]> {
+  return invoke<CadCollision[]>("cad_detect_collisions");
+}
 
 // ----- M8 BOM command surface -----
 
@@ -464,13 +514,21 @@ export interface BomItem {
   notes?: string | null;
 }
 
-export async function bomGenerate(): Promise<BomItem[]> { return invoke<BomItem[]>("bom_generate"); }
-export async function bomUpdateItem(item: BomItem): Promise<BomItem> { return invoke<BomItem>("bom_update_item", { item }); }
+export async function bomGenerate(): Promise<BomItem[]> {
+  return invoke<BomItem[]>("bom_generate");
+}
+export async function bomUpdateItem(item: BomItem): Promise<BomItem> {
+  return invoke<BomItem>("bom_update_item", { item });
+}
 
 // ----- M8 Export command surface -----
 
-export async function exportBomCsv(): Promise<string> { return invoke<string>("export_bom_csv"); }
-export async function exportSchematicSvg(): Promise<string> { return invoke<string>("export_schematic_svg"); }
+export async function exportBomCsv(): Promise<string> {
+  return invoke<string>("export_bom_csv");
+}
+export async function exportSchematicSvg(): Promise<string> {
+  return invoke<string>("export_schematic_svg");
+}
 
 // ----- M9 Compile command surface -----
 
@@ -481,7 +539,9 @@ export interface Toolchain {
   version?: string | null;
 }
 
-export async function compileDetectToolchains(): Promise<Toolchain[]> { return invoke<Toolchain[]>("compile_detect_toolchains"); }
+export async function compileDetectToolchains(): Promise<Toolchain[]> {
+  return invoke<Toolchain[]>("compile_detect_toolchains");
+}
 
 export interface CompileResult {
   success: boolean;
@@ -500,7 +560,11 @@ export interface BoardInfo {
 export async function compileSketch(fqbn: string, sketchDir: string): Promise<CompileResult> {
   return invoke<CompileResult>("compile_sketch", { fqbn, sketchDir });
 }
-export async function uploadFirmware(fqbn: string, port: string, sketchDir: string): Promise<CompileResult> {
+export async function uploadFirmware(
+  fqbn: string,
+  port: string,
+  sketchDir: string,
+): Promise<CompileResult> {
   return invoke<CompileResult>("upload_firmware", { fqbn, port, sketchDir });
 }
 export async function compileListBoards(): Promise<BoardInfo[]> {

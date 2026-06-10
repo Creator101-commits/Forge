@@ -24,8 +24,14 @@ export function CadWorkspace() {
         <div className="flex-1" />
         <div role="group" className="flex rounded-1 border border-border-1 bg-bg-2 p-0.5">
           {VIEWS.map((v) => (
-            <button key={v} onClick={() => setView(v)}
-              className={clsx("rounded-1 px-2 py-0.5 text-[11px]", view === v ? "bg-accent text-[#04211d]" : "text-text-3 hover:text-text-1")}>
+            <button
+              key={v}
+              onClick={() => setView(v)}
+              className={clsx(
+                "rounded-1 px-2 py-0.5 text-[11px]",
+                view === v ? "bg-accent text-[#04211d]" : "text-text-3 hover:text-text-1",
+              )}
+            >
               {v}
             </button>
           ))}
@@ -37,10 +43,18 @@ export function CadWorkspace() {
         <aside className="w-48 shrink-0 border-r border-border-1 bg-bg-2 p-2 flex flex-col">
           <div className="text-[10px] uppercase tracking-wider text-text-3 mb-2">Scene</div>
           <div className="flex flex-col gap-0.5 text-xs text-text-2">
-            <div className="rounded-1 px-2 py-0.5 hover:bg-surface-1 cursor-pointer">📦 Assembly</div>
-            <div className="rounded-1 px-2 py-0.5 hover:bg-surface-1 cursor-pointer ml-3">🔲 Board</div>
-            <div className="rounded-1 px-2 py-0.5 hover:bg-surface-1 cursor-pointer ml-3">🔲 Enclosure</div>
-            <div className="rounded-1 px-2 py-0.5 hover:bg-surface-1 cursor-pointer">📦 Hardware</div>
+            <div className="rounded-1 px-2 py-0.5 hover:bg-surface-1 cursor-pointer">
+              📦 Assembly
+            </div>
+            <div className="rounded-1 px-2 py-0.5 hover:bg-surface-1 cursor-pointer ml-3">
+              🔲 Board
+            </div>
+            <div className="rounded-1 px-2 py-0.5 hover:bg-surface-1 cursor-pointer ml-3">
+              🔲 Enclosure
+            </div>
+            <div className="rounded-1 px-2 py-0.5 hover:bg-surface-1 cursor-pointer">
+              📦 Hardware
+            </div>
           </div>
         </aside>
 
@@ -66,9 +80,23 @@ export function CadWorkspace() {
   );
 }
 
-function ToolButton({ icon: Icon, label, active }: { icon: typeof MousePointer2; label: string; active?: boolean }) {
+function ToolButton({
+  icon: Icon,
+  label,
+  active,
+}: {
+  icon: typeof MousePointer2;
+  label: string;
+  active?: boolean;
+}) {
   return (
-    <button className={clsx("rounded-1 p-1.5 transition-colors", active ? "bg-accent/15 text-accent" : "text-text-3 hover:text-text-1")} title={label}>
+    <button
+      className={clsx(
+        "rounded-1 p-1.5 transition-colors",
+        active ? "bg-accent/15 text-accent" : "text-text-3 hover:text-text-1",
+      )}
+      title={label}
+    >
       <Icon className="h-3.5 w-3.5" />
     </button>
   );

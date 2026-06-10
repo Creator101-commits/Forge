@@ -16,10 +16,7 @@ export function CompileWorkspace() {
   const detect = useCallback(async () => {
     setDetecting(true);
     try {
-      const [tc, b] = await Promise.all([
-        ipc.compileDetectToolchains(),
-        ipc.compileListBoards(),
-      ]);
+      const [tc, b] = await Promise.all([ipc.compileDetectToolchains(), ipc.compileListBoards()]);
       setToolchains(tc);
       setBoards(b);
       if (b.length > 0 && !port) setPort(b[0]?.port ?? "");
@@ -30,7 +27,9 @@ export function CompileWorkspace() {
     setDetecting(false);
   }, [port]);
 
-  useEffect(() => { void detect(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    void detect();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleCompile = async () => {
     if (!fqbn || !sketchDir) return;
@@ -161,9 +160,7 @@ export function CompileWorkspace() {
           <span
             key={tc.id}
             className={`rounded-1 px-2 py-0.5 text-[10px] ${
-              tc.installed
-                ? "bg-ok/15 text-ok"
-                : "bg-warn/15 text-warn"
+              tc.installed ? "bg-ok/15 text-ok" : "bg-warn/15 text-warn"
             }`}
             title={tc.version ?? undefined}
           >
