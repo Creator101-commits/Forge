@@ -1,6 +1,8 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { clsx } from "clsx";
 import { useSettingsStore } from "@/store/settings";
+import { useAiStore } from "@/store/ai";
+import { Check, Loader2 } from "lucide-react";
 
 export function SettingsWorkspace() {
   const settings = useSettingsStore((s) => s.settings);
@@ -56,6 +58,10 @@ export function SettingsWorkspace() {
           checked={settings.telemetry_enabled}
           onChange={(telemetry_enabled) => void update({ telemetry_enabled })}
         />
+      </Group>
+
+      <Group title="AI Providers">
+        <AiProviderSection />
       </Group>
     </section>
   );
@@ -162,5 +168,110 @@ function ToggleRow({
         />
       </button>
     </Row>
+  );
+}
+
+function AiProviderSection() {
+  const providers = useAiStore((s) => s.providers);
+  const loaded = useAiStore((s) => s.loaded);
+  const loadProviders = useAiStore((s) => s.loadProviders);
+  const setProvider = useAiStore((s) => s.setProvider);
+  const testConnection = useAiStore((s) => s.testConnection);
+  const [expanded, setExpanded] = useState<string | null>(null);
+  const [keys, setKeys] = useState<Record<string, string>>({});
+  const [baseUrls, setBaseUrls] = useState<Record<string, string>>({});
+  const [testing, setTesting] = useState<Record<string, boolean>>({});
+  const [results, setResults] = useState<Record<string, boolean | null>>({});
+
+  useEffect(() => {
+    if (!loaded) void loadProviders();
+  }, [loaded, loadProviders]);
+
+  return (
+    <div className="flex flex-col">
+      {providers.map((p) => (
+        <div key={p.id} className="border-b border-border-1 last:border-b-0">
+          <div className="flex items-center justify-between gap-4 px-4 py-3">
+            <div className="flex flex-col">
+              <span className="text-sm text-text-1">{p.name}</span>
+              <span className="text-xs text-text-3">
+                {p.isConfigured
+                  ? `Configured${p.keyPreview ? ` (${p.keyPreview})` : ""}`
+                  : "Not configured"}
+              </span>
+            </div>
+            <button
+              onClick={() => setExpanded(expanded === p.id ? null : p.id)}
+              className={clsx(
+                "rounded-2 px-3 py-1 text-xs transition-colors",
+                p.isConfigured
+                  ? "border border-border-1 text-text-2 hover:text-text-1"
+                  : "bg-accent text-[#04211d]",
+              )}
+            >
+              {p.isConfigured ? "Edit" : "Configure"}
+            </button>
+          </div>
+
+          {expanded === p.id && (
+            <div className="flex flex-col gap-3 px-4 pb-3">
+              <label className="flex flex-col gap-1 text-xs text-text-3">
+                API Key
+                <input
+                  type="password"
+                  placeholder={p.isConfigured ? "•••••••• (leave blank to keep)" : "sk-..."}
+                  value={keys[p.id] ?? ""}
+                  onChange={(e) => setKeys({ ...keys, [p.id]: e.target.value })}
+                  className="input font-mono"
+                />
+              </label>
+              {(p.id === "openai-compat" || p.id === "ollama") && (
+                <label className="flex flex-col gap-1 text-xs text-text-3">
+                  Base URL{p.id === "openai-compat" ? " (required)" : " (optional)"}
+                  <input
+                    placeholder={p.id === "ollama" ? "http://localhost:11434/api" : "https://api.example.com/v1"}
+                    value={baseUrls[p.id] ?? ""}
+                    onChange={(e) => setBaseUrls({ ...baseUrls, [p.id]: e.target.value })}
+                    className="input font-mono"
+                  />
+                </label>
+              )}
+              <div className="flex gap-2">
+                <button
+                  onClick={async () => {
+                    const key = keys[p.id];
+                    if (!key && !p.isConfigured) return;
+                    await setProvider(p.id, key || "", baseUrls[p.id] || undefined);
+                    setExpanded(null);
+                  }}
+                  className="btn-accent text-xs"
+                >
+                  Save
+                </button>
+                {p.isConfigured && (
+                  <button
+                    onClick={async () => {
+                      setTesting({ ...testing, [p.id]: true });
+                      const ok = await testConnection(p.id);
+                      setTesting({ ...testing, [p.id]: false });
+                      setResults({ ...results, [p.id]: ok });
+                    }}
+                    disabled={testing[p.id]}
+                    className="btn-ghost flex items-center gap-1 text-xs"
+                  >
+                    {testing[p.id] ? (
+                      <Loader2 className="h-3 w-3 animate-spin" />
+                    ) : results[p.id] !== undefined ? (
+                      <Check className={clsx("h-3 w-3", results[p.id] ? "text-ok" : "text-error")} />
+                    ) : null}
+                    Test Connection
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
   );
 }

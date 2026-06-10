@@ -1,9 +1,16 @@
 //! Tauri command surface. Each command is a thin shim that delegates to a
 //! pure-Rust function so the logic is unit-testable without Tauri runtime.
 
+pub mod ai;
 pub mod boards;
+pub mod bom;
+pub mod cad;
+pub mod circuit;
+pub mod compile_cmd;
 pub mod diagnostics;
+pub mod export_cmd;
 pub mod filesystem;
+pub mod pcb;
 pub mod project;
 pub mod search;
 pub mod serial;

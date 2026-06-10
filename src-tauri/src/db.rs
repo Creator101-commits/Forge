@@ -60,7 +60,7 @@ mod tests {
         let dir = tempdir().unwrap();
         let path = dir.path().join("forge.db");
         let mut conn = open(&path).unwrap();
-        assert_eq!(applied_version(&mut conn).unwrap(), 1);
+        assert_eq!(applied_version(&mut conn).unwrap(), 4);
 
         for table in ["project", "event_log", "recent_project", "app_settings"] {
             let count: i64 = conn
@@ -80,11 +80,11 @@ mod tests {
         let path = dir.path().join("forge.db");
         {
             let mut conn = open(&path).unwrap();
-            assert_eq!(applied_version(&mut conn).unwrap(), 1);
+            assert_eq!(applied_version(&mut conn).unwrap(), 4);
         }
         // Reopening (upgrade path with nothing to do) must not error or
         // re-apply migrations.
         let mut conn = open(&path).unwrap();
-        assert_eq!(applied_version(&mut conn).unwrap(), 1);
+        assert_eq!(applied_version(&mut conn).unwrap(), 4);
     }
 }

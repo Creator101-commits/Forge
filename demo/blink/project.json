@@ -1,0 +1,17 @@
+{
+  "name": "Forge Demo — Blink LED",
+  "version": "1.0.0",
+  "description": "A complete demo project: Arduino Blink with circuit schematic, PCB layout, enclosure, and firmware.",
+  "board": "arduino:avr:uno",
+  "files": {
+    "sketch": "blink.ino",
+    "circuit": "circuit.json",
+    "pcb": "pcb.json",
+    "cad": "cad.json"
+  },
+  "bom": [
+    { "refDesignators": ["U1"], "value": "Arduino Uno R3", "package": "DIP-28", "quantity": 1, "description": "Microcontroller board" },
+    { "refDesignators": ["R1"], "value": "220Ω", "package": "axial_0.4in", "quantity": 1, "description": "Current limiting resistor" },
+    { "refDesignators": ["D1"], "value": "Red LED", "package": "led_5mm", "quantity": 1, "description": "5mm red LED indicator" }
+  ]
+}

@@ -25,6 +25,7 @@ pub struct AppState {
     diagnostics: RwLock<Vec<Diagnostic>>,
     serial: Mutex<Option<SerialSession>>,
     watch_stop: Mutex<Option<Arc<AtomicBool>>>,
+    pub ai_registry: crate::ai::registry::ProviderRegistry,
 }
 
 struct Inner {
@@ -42,6 +43,7 @@ impl AppState {
             diagnostics: RwLock::new(Vec::new()),
             serial: Mutex::new(None),
             watch_stop: Mutex::new(None),
+            ai_registry: crate::ai::registry::ProviderRegistry::new(),
         }
     }
 

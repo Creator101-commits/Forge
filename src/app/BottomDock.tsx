@@ -2,6 +2,7 @@ import { useState } from "react";
 import { clsx } from "clsx";
 import { ProblemsPanel } from "@/features/code/ProblemsPanel";
 import { SerialMonitor } from "@/features/code/SerialMonitor";
+import { AiDock } from "@/features/ai/AiDock";
 import { useDiagnosticsStore } from "@/store/diagnostics";
 
 const TABS = ["AI", "Problems", "Output", "Serial Monitor"] as const;
@@ -46,7 +47,7 @@ export function BottomDock() {
           bare ? "" : "p-3",
         )}
       >
-        {tab === "AI" && <div>AI dock arrives in M3.</div>}
+        {tab === "AI" && <AiDock />}
         {tab === "Problems" && <ProblemsPanel />}
         {tab === "Output" && <div>Compile output appears here in M9.</div>}
         {tab === "Serial Monitor" && <SerialMonitor />}

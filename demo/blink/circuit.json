@@ -1,0 +1,44 @@
+{
+  "name": "Forge Demo — Blink LED",
+  "description": "Simple LED blinker exercising all Forge workspaces",
+  "board": "arduino:avr:uno",
+  "components": [
+    {
+      "refDes": "U1",
+      "value": "Arduino Uno R3",
+      "symbolId": "arduino_uno",
+      "footprintId": "arduino_uno_shield",
+      "x": 200, "y": 200, "rotation": 0, "mirrored": false
+    },
+    {
+      "refDes": "R1",
+      "value": "220Ω",
+      "symbolId": "resistor",
+      "footprintId": "axial_0.4in",
+      "x": 400, "y": 150, "rotation": 0, "mirrored": false
+    },
+    {
+      "refDes": "D1",
+      "value": "Red LED",
+      "symbolId": "led",
+      "footprintId": "led_5mm",
+      "x": 500, "y": 150, "rotation": 0, "mirrored": false
+    }
+  ],
+  "pins": [
+    { "componentId": "U1", "name": "D13", "number": "13", "x": 250, "y": 180, "electricalType": "output" },
+    { "componentId": "U1", "name": "GND", "number": "GND", "x": 250, "y": 240, "electricalType": "power" },
+    { "componentId": "R1", "name": "1", "number": "1", "x": 380, "y": 150, "electricalType": "passive" },
+    { "componentId": "R1", "name": "2", "number": "2", "x": 420, "y": 150, "electricalType": "passive" },
+    { "componentId": "D1", "name": "A", "number": "A", "x": 480, "y": 150, "electricalType": "passive" },
+    { "componentId": "D1", "name": "K", "number": "K", "x": 520, "y": 150, "electricalType": "passive" }
+  ],
+  "wires": [
+    { "netId": "net1", "points": [[250, 180], [380, 180], [380, 150]] },
+    { "netId": "net2", "points": [[420, 150], [480, 150]] }
+  ],
+  "nets": [
+    { "id": "net1", "name": "D13-R1", "class": "signal" },
+    { "id": "net2", "name": "R1-D1", "class": "signal" }
+  ]
+}

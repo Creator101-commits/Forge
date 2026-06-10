@@ -1,0 +1,41 @@
+{
+  "name": "Blink LED PCB",
+  "layers": [
+    { "id": "top", "name": "Top Copper", "kind": "top_copper", "color": "#ff4444", "visible": true },
+    { "id": "bottom", "name": "Bottom Copper", "kind": "bottom_copper", "color": "#4444ff", "visible": true },
+    { "id": "outline", "name": "Board Outline", "kind": "outline", "color": "#ffff44", "visible": true }
+  ],
+  "boardOutline": {
+    "id": "outline1",
+    "polygonJson": "[[0,0],[2000,0],[2000,1500],[0,1500]]"
+  },
+  "footprints": [
+    {
+      "id": "fp-u1", "componentRef": "U1",
+      "libraryId": "arduino_uno_shield", "x": 500, "y": 750,
+      "rotation": 0, "side": "top"
+    },
+    {
+      "id": "fp-r1", "componentRef": "R1",
+      "libraryId": "axial_0.4in", "x": 1200, "y": 400,
+      "rotation": 0, "side": "top"
+    },
+    {
+      "id": "fp-d1", "componentRef": "D1",
+      "libraryId": "led_5mm", "x": 1400, "y": 400,
+      "rotation": 0, "side": "top"
+    }
+  ],
+  "traces": [
+    {
+      "id": "t1", "netId": "net1", "layerId": "top",
+      "pointsJson": "[[750,650],[1200,650],[1200,400]]", "width": 0.5
+    },
+    {
+      "id": "t2", "netId": "net2", "layerId": "top",
+      "pointsJson": "[[1300,400],[1400,400]]", "width": 0.5
+    }
+  ],
+  "vias": [],
+  "zones": []
+}

@@ -1,7 +1,7 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
   "productName": "Forge",
-  "version": "0.3.0",
+  "version": "1.0.0",
   "identifier": "com.forge.app",
   "build": {
     "beforeDevCommand": "pnpm dev",
@@ -13,17 +13,18 @@
     "windows": [
       {
         "title": "Forge",
-        "width": 1280,
-        "height": 800,
-        "minWidth": 960,
-        "minHeight": 600,
+        "width": 1440,
+        "height": 900,
+        "minWidth": 1024,
+        "minHeight": 640,
         "decorations": true,
         "fullscreen": false,
-        "resizable": true
+        "resizable": true,
+        "center": true
       }
     ],
     "security": {
-      "csp": null
+      "csp": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self' http://localhost:* https://api.openai.com https://api.anthropic.com http://localhost:11434; img-src 'self' data:; font-src 'self'"
     }
   },
   "bundle": {
@@ -38,6 +39,14 @@
     ],
     "category": "DeveloperTool",
     "shortDescription": "AI-native hardware engineering IDE",
-    "longDescription": "Forge — design enclosures, schematics, PCBs, and firmware in one AI-assisted desktop app."
+    "longDescription": "Forge — design enclosures, schematics, PCBs, and firmware in one AI-assisted desktop IDE. Circuit + PCB layout, 3D CAD, BOM generation, compile & upload to Arduino-compatible boards.",
+    "copyright": "© 2026 Forge",
+
+    "macOS": {
+      "minimumSystemVersion": "11.0"
+    },
+    "windows": {
+      "wix": null
+    }
   }
 }

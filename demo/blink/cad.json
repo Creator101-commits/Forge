@@ -1,0 +1,43 @@
+{
+  "name": "Blink LED Enclosure",
+  "objects": [
+    {
+      "id": "base", "parentId": null,
+      "name": "Enclosure Base",
+      "kind": "box",
+      "x": 0, "y": 0, "z": 0,
+      "rx": 0, "ry": 0, "rz": 0,
+      "sx": 80, "sy": 50, "sz": 20,
+      "color": "#333333", "locked": false, "hidden": false,
+      "metadataJson": "{\"material\":\"ABS\"}"
+    },
+    {
+      "id": "lid", "parentId": null,
+      "name": "Enclosure Lid",
+      "kind": "box",
+      "x": 0, "y": 0, "z": 22,
+      "rx": 0, "ry": 0, "rz": 0,
+      "sx": 80, "sy": 50, "sz": 3,
+      "color": "#555555", "locked": false, "hidden": false,
+      "metadataJson": "{\"material\":\"ABS\"}"
+    },
+    {
+      "id": "led-hole",
+      "parentId": null,
+      "name": "LED Opening",
+      "kind": "cylinder",
+      "x": 30, "y": 15, "z": 20,
+      "rx": 0, "ry": 0, "rz": 0,
+      "sx": 5, "sy": 5, "sz": 5,
+      "color": "#ff000040", "locked": false, "hidden": false,
+      "metadataJson": "{\"cutout\":true}"
+    }
+  ],
+  "views": [
+    {
+      "id": "default",
+      "name": "Default",
+      "cameraJson": "{\"position\":[120,80,100],\"target\":[40,25,12],\"zoom\":1}"
+    }
+  ]
+}

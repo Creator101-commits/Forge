@@ -1,7 +1,7 @@
 {
   "name": "forge",
   "private": true,
-  "version": "0.3.0",
+  "version": "1.0.0",
   "type": "module",
   "description": "Forge — AI-native hardware engineering IDE (Tauri 2 + Rust + React)",
   "license": "UNLICENSED",
@@ -12,6 +12,8 @@
     "tauri": "tauri",
     "tauri:dev": "tauri dev",
     "tauri:build": "tauri build",
+    "release:check": "pnpm lint && pnpm typecheck && pnpm test && cd src-tauri && cargo check && cargo test --lib",
+    "release:build": "pnpm tauri:build:release",
     "lint": "eslint . --ext .ts,.tsx --max-warnings=0",
     "lint:fix": "eslint . --ext .ts,.tsx --fix",
     "format": "prettier --write \"src/**/*.{ts,tsx,css,json,md}\"",

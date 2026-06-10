@@ -8,6 +8,7 @@ import {
   Sparkles,
   Share2,
   Settings,
+  Upload,
   type LucideIcon,
 } from "lucide-react";
 
@@ -20,6 +21,7 @@ export type WorkspaceId =
   | "bom"
   | "ai"
   | "export"
+  | "compile"
   | "settings";
 
 export interface WorkspaceDef {
@@ -38,5 +40,6 @@ export const WORKSPACES: readonly WorkspaceDef[] = [
   { id: "bom", label: "BOM", icon: ListChecks, shortcut: "6" },
   { id: "ai", label: "AI", icon: Sparkles, shortcut: "7" },
   { id: "export", label: "Export", icon: Share2, shortcut: "8" },
+  { id: "compile", label: "Compile", icon: Upload, shortcut: "0" },
   { id: "settings", label: "Settings", icon: Settings, shortcut: "9" },
 ] as const;

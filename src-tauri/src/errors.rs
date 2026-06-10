@@ -46,6 +46,12 @@ impl From<serde_json::Error> for ForgeError {
     }
 }
 
+impl From<crate::ai::AiError> for ForgeError {
+    fn from(e: crate::ai::AiError) -> Self {
+        ForgeError::Internal(e.to_string())
+    }
+}
+
 impl ForgeError {
     pub fn code(&self) -> &'static str {
         match self {

@@ -192,3 +192,317 @@ export async function sendSerialData(data: string): Promise<void> {
 export async function listBoardProfiles(): Promise<BoardProfile[]> {
   return invoke<BoardProfile[]>("list_board_profiles");
 }
+
+// ----- M3 AI command surface -----
+
+export interface AiProviderInfo {
+  id: string;
+  name: string;
+  capabilities: { supportsStreaming: boolean; supportsSystemPrompt: boolean };
+  isConfigured: boolean;
+  keyPreview: string | null;
+  models: string[];
+}
+
+export interface ChatMessage {
+  role: "system" | "user" | "assistant";
+  content: string;
+}
+
+export interface ChatRequest {
+  messages: ChatMessage[];
+  model: string;
+  temperature: number;
+  systemPrompt: string | null;
+}
+
+export interface ChatDelta {
+  content: string;
+}
+
+export interface AiAction {
+  kind: "createFile" | "updateFile" | "deleteFile" | "patchRange" | "insertBefore";
+  path: string;
+  content?: string;
+  startLine?: number;
+  endLine?: number;
+  replacement?: string;
+  line?: number;
+}
+
+export interface ActionRecord {
+  id: string;
+  action: AiAction;
+  status: "proposed" | "previewed" | "approved" | "applied" | "reverted" | "rejected";
+  description: string;
+}
+
+export async function aiListProviders(): Promise<AiProviderInfo[]> {
+  return invoke<AiProviderInfo[]>("ai_list_providers");
+}
+
+export async function aiSetProvider(providerId: string, apiKey: string, baseUrl?: string): Promise<AiProviderInfo> {
+  return invoke<AiProviderInfo>("ai_set_provider", { providerId, apiKey, baseUrl });
+}
+
+export async function aiTestConnection(providerId: string): Promise<void> {
+  return invoke<void>("ai_test_connection", { providerId });
+}
+
+export async function aiChat(providerId: string, request: ChatRequest): Promise<void> {
+  return invoke<void>("ai_chat", { providerId, request });
+}
+
+export async function aiApplyPatch(action: AiAction): Promise<ActionRecord> {
+  return invoke<ActionRecord>("ai_apply_patch", { action });
+}
+
+export async function aiRevertPatch(actionId: string): Promise<void> {
+  return invoke<void>("ai_revert_patch", { actionId });
+}
+
+// ----- M4 Circuit command surface -----
+
+export interface CircuitComponent {
+  id: string;
+  refDes: string;
+  value: string;
+  symbolId: string;
+  footprintId?: string | null;
+  x: number;
+  y: number;
+  rotation: number;
+  mirrored: boolean;
+  mode: string;
+}
+
+export interface CircuitPin {
+  id: string;
+  componentId: string;
+  name: string;
+  number: string;
+  x: number;
+  y: number;
+  electricalType: string;
+}
+
+export interface CircuitWire {
+  id: string;
+  netId: string;
+  points: [number, number][];
+  mode: string;
+}
+
+export interface CircuitNet {
+  id: string;
+  name: string;
+  class: string;
+}
+
+export interface ErcIssue {
+  severity: "Error" | "Warning";
+  code: string;
+  message: string;
+  componentIds: string[];
+}
+
+export async function circuitListComponents(): Promise<CircuitComponent[]> {
+  return invoke<CircuitComponent[]>("circuit_list_components");
+}
+export async function circuitAddComponent(comp: CircuitComponent): Promise<CircuitComponent> {
+  return invoke<CircuitComponent>("circuit_add_component", { comp });
+}
+export async function circuitRemoveComponent(id: string): Promise<void> {
+  return invoke<void>("circuit_remove_component", { id });
+}
+export async function circuitUpdateComponent(comp: CircuitComponent): Promise<CircuitComponent> {
+  return invoke<CircuitComponent>("circuit_update_component", { comp });
+}
+export async function circuitListPins(): Promise<CircuitPin[]> {
+  return invoke<CircuitPin[]>("circuit_list_pins");
+}
+export async function circuitAddPin(pin: CircuitPin): Promise<CircuitPin> {
+  return invoke<CircuitPin>("circuit_add_pin", { pin });
+}
+export async function circuitListWires(): Promise<CircuitWire[]> {
+  return invoke<CircuitWire[]>("circuit_list_wires");
+}
+export async function circuitAddWire(wire: CircuitWire): Promise<CircuitWire> {
+  return invoke<CircuitWire>("circuit_add_wire", { wire });
+}
+export async function circuitRemoveWire(id: string): Promise<void> {
+  return invoke<void>("circuit_remove_wire", { id });
+}
+export async function circuitListNets(): Promise<CircuitNet[]> {
+  return invoke<CircuitNet[]>("circuit_list_nets");
+}
+export async function circuitAddNet(net: CircuitNet): Promise<CircuitNet> {
+  return invoke<CircuitNet>("circuit_add_net", { net });
+}
+export async function circuitRunErc(): Promise<ErcIssue[]> {
+  return invoke<ErcIssue[]>("circuit_run_erc");
+}
+
+// ----- M6 PCB command surface -----
+
+export interface PcbLayer {
+  id: string;
+  name: string;
+  kind: string;
+  color: string;
+  visible: boolean;
+}
+
+export interface PcbFootprint {
+  id: string;
+  componentRef: string;
+  libraryId: string;
+  x: number;
+  y: number;
+  rotation: number;
+  side: string;
+}
+
+export interface PcbPad {
+  id: string;
+  footprintId: string;
+  name: string;
+  netId?: string | null;
+  shapeJson: string;
+  layerMask: number;
+}
+
+export interface PcbTrace {
+  id: string;
+  netId: string;
+  layerId: string;
+  pointsJson: string;
+  width: number;
+}
+
+export interface PcbVia {
+  id: string;
+  netId: string;
+  x: number;
+  y: number;
+  drill: number;
+  diameter: number;
+}
+
+export interface PcbZone {
+  id: string;
+  netId: string;
+  layerId: string;
+  polygonJson: string;
+  clearance: number;
+}
+
+export interface DrcIssue {
+  severity: "Error" | "Warning";
+  code: string;
+  message: string;
+  position?: [number, number] | null;
+}
+
+export async function pcbListLayers(): Promise<PcbLayer[]> { return invoke<PcbLayer[]>("pcb_list_layers"); }
+export async function pcbAddLayer(layer: PcbLayer): Promise<PcbLayer> { return invoke<PcbLayer>("pcb_add_layer", { layer }); }
+export async function pcbListFootprints(): Promise<PcbFootprint[]> { return invoke<PcbFootprint[]>("pcb_list_footprints"); }
+export async function pcbAddFootprint(fp: PcbFootprint): Promise<PcbFootprint> { return invoke<PcbFootprint>("pcb_add_footprint", { fp }); }
+export async function pcbRemoveFootprint(id: string): Promise<void> { return invoke<void>("pcb_remove_footprint", { id }); }
+export async function pcbListPads(): Promise<PcbPad[]> { return invoke<PcbPad[]>("pcb_list_pads"); }
+export async function pcbAddPad(pad: PcbPad): Promise<PcbPad> { return invoke<PcbPad>("pcb_add_pad", { pad }); }
+export async function pcbListTraces(): Promise<PcbTrace[]> { return invoke<PcbTrace[]>("pcb_list_traces"); }
+export async function pcbAddTrace(trace: PcbTrace): Promise<PcbTrace> { return invoke<PcbTrace>("pcb_add_trace", { trace }); }
+export async function pcbRemoveTrace(id: string): Promise<void> { return invoke<void>("pcb_remove_trace", { id }); }
+export async function pcbListVias(): Promise<PcbVia[]> { return invoke<PcbVia[]>("pcb_list_vias"); }
+export async function pcbAddVia(via: PcbVia): Promise<PcbVia> { return invoke<PcbVia>("pcb_add_via", { via }); }
+export async function pcbListZones(): Promise<PcbZone[]> { return invoke<PcbZone[]>("pcb_list_zones"); }
+export async function pcbAddZone(zone: PcbZone): Promise<PcbZone> { return invoke<PcbZone>("pcb_add_zone", { zone }); }
+export async function pcbRunDrc(): Promise<DrcIssue[]> { return invoke<DrcIssue[]>("pcb_run_drc"); }
+
+// ----- M7 CAD command surface -----
+
+export interface CadObject {
+  id: string;
+  parentId?: string | null;
+  name: string;
+  kind: string;
+  x: number; y: number; z: number;
+  rx: number; ry: number; rz: number;
+  sx: number; sy: number; sz: number;
+  color: string;
+  locked: boolean;
+  hidden: boolean;
+  metadataJson: string;
+}
+
+export interface CadCollision {
+  objectA: string;
+  objectB: string;
+  overlapMm: number;
+}
+
+export async function cadListObjects(): Promise<CadObject[]> { return invoke<CadObject[]>("cad_list_objects"); }
+export async function cadAddObject(obj: CadObject): Promise<CadObject> { return invoke<CadObject>("cad_add_object", { obj }); }
+export async function cadUpdateObject(obj: CadObject): Promise<CadObject> { return invoke<CadObject>("cad_update_object", { obj }); }
+export async function cadRemoveObject(id: string): Promise<void> { return invoke<void>("cad_remove_object", { id }); }
+export async function cadDetectCollisions(): Promise<CadCollision[]> { return invoke<CadCollision[]>("cad_detect_collisions"); }
+
+// ----- M8 BOM command surface -----
+
+export interface BomItem {
+  id: string;
+  refDesignators: string[];
+  value: string;
+  package: string;
+  description: string;
+  quantity: number;
+  unitPrice?: number | null;
+  supplier?: string | null;
+  supplierPn?: string | null;
+  stock?: number | null;
+  notes?: string | null;
+}
+
+export async function bomGenerate(): Promise<BomItem[]> { return invoke<BomItem[]>("bom_generate"); }
+export async function bomUpdateItem(item: BomItem): Promise<BomItem> { return invoke<BomItem>("bom_update_item", { item }); }
+
+// ----- M8 Export command surface -----
+
+export async function exportBomCsv(): Promise<string> { return invoke<string>("export_bom_csv"); }
+export async function exportSchematicSvg(): Promise<string> { return invoke<string>("export_schematic_svg"); }
+
+// ----- M9 Compile command surface -----
+
+export interface Toolchain {
+  id: string;
+  name: string;
+  installed: boolean;
+  version?: string | null;
+}
+
+export async function compileDetectToolchains(): Promise<Toolchain[]> { return invoke<Toolchain[]>("compile_detect_toolchains"); }
+
+export interface CompileResult {
+  success: boolean;
+  output: string;
+  artifactPath?: string | null;
+  durationMs: number;
+  toolchainMissing: boolean;
+}
+
+export interface BoardInfo {
+  port: string;
+  boardName?: string | null;
+  fqbn?: string | null;
+}
+
+export async function compileSketch(fqbn: string, sketchDir: string): Promise<CompileResult> {
+  return invoke<CompileResult>("compile_sketch", { fqbn, sketchDir });
+}
+export async function uploadFirmware(fqbn: string, port: string, sketchDir: string): Promise<CompileResult> {
+  return invoke<CompileResult>("upload_firmware", { fqbn, port, sketchDir });
+}
+export async function compileListBoards(): Promise<BoardInfo[]> {
+  return invoke<BoardInfo[]>("compile_list_boards");
+}
