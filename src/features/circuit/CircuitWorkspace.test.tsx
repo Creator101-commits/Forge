@@ -15,11 +15,13 @@ describe("CircuitWorkspace", () => {
     expect(screen.getByTestId("schematic-canvas")).toBeInTheDocument();
   });
 
-  it("switching to a non-schematic mode shows the M5 placeholder", () => {
+  it("switching modes swaps in that mode's editor", () => {
     render(<CircuitWorkspace />);
     fireEvent.click(screen.getByText("Ladder"));
     expect(screen.queryByTestId("schematic-canvas")).not.toBeInTheDocument();
-    expect(screen.getByText(/ladder logic/i)).toBeInTheDocument();
+    expect(screen.getByText(/add a rung/i)).toBeInTheDocument();
+    fireEvent.click(screen.getByText("Breadboard"));
+    expect(screen.getByTestId("breadboard-canvas")).toBeInTheDocument();
   });
 
   it("selecting a tool updates the store and reflects pressed state", () => {

@@ -61,12 +61,17 @@ Remaining M4: AI "generate circuit from prompt" action (step 9) + schematic SVG 
 9. "Generate circuit from prompt" AI action → structured actions previewed before apply.  → Test: fixture prompt yields expected add_component/add_wire actions.
    - **Exit:** build the Temperature Monitor schematic with clean ERC → `v0.5.0`.
 
-### Phase 3 — M5 remaining circuit modes (share the M4 data model) — ⚠️ block done
-Status (2026-06-13): block-diagram mode implemented — `src/store/blocks.ts` (categorized
-blocks + directional connections w/ self/dup guards) and `BlockCanvas.tsx` (add toolbar,
-drag, connect, protocol labels), wired into `CircuitWorkspace` "block" mode. Tested in
-`blocks.test.ts` + `BlockCanvas.test.tsx`. Remaining M5: breadboard + ladder renderers, AI
-per-mode actions, exports.
+### Phase 3 — M5 circuit modes (share the M4 data model) — ✅ EDITORS DONE
+Status (2026-06-13): all three extra modes implemented and verified live.
+- block: `src/store/blocks.ts` + `BlockCanvas.tsx` (categorized blocks, directional labeled
+  connections, self/dup guards).
+- breadboard: `src/store/breadboard.ts` (tie-point grid + rails as nodes, union-find
+  `computeNets` for electrical awareness, jumpers) + `BreadboardCanvas.tsx` (color picker,
+  click-two-holes jumpers, net tinting).
+- ladder: `src/store/ladder.ts` (rungs of contacts→coils + `evaluateRung` simulation) +
+  `LadderCanvas.tsx` (add/relabel/remove elements, input toggles, live energization).
+All wired into `CircuitWorkspace` mode switch. Tested: `blocks`/`breadboard`/`ladder` store
+tests + `BlockCanvas` component test. Remaining M5: AI per-mode actions + SVG/PDF exports (backend).
 10. Breadboard renderer (tie-point grid, rails, colored jumpers, net-aware).
 11. Block diagram (draggable categorized blocks, directional/protocol-labeled connections, swimlanes).
 12. Ladder diagram (contacts/coils/timers, rungs, symbolic variable table).

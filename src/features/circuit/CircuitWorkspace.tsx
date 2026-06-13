@@ -11,6 +11,8 @@ import {
 import { useCircuitStore, type CircuitMode } from "@/store/circuit";
 import { SchematicCanvas } from "./SchematicCanvas";
 import { BlockCanvas } from "./BlockCanvas";
+import { BreadboardCanvas } from "./BreadboardCanvas";
+import { LadderCanvas } from "./LadderCanvas";
 
 const MODES: { id: CircuitMode; label: string }[] = [
   { id: "schematic", label: "Schematic" },
@@ -95,7 +97,8 @@ export function CircuitWorkspace() {
       <div className="relative flex-1 overflow-hidden">
         {mode === "schematic" && <SchematicCanvas />}
         {mode === "block" && <BlockCanvas />}
-        {(mode === "breadboard" || mode === "ladder") && <ModePlaceholder mode={mode} />}
+        {mode === "breadboard" && <BreadboardCanvas />}
+        {mode === "ladder" && <LadderCanvas />}
       </div>
 
       <div className="flex items-center gap-3 border-t border-border-1 px-3 py-1 text-[11px] text-text-3">
@@ -109,23 +112,6 @@ export function CircuitWorkspace() {
         {tool === "place" && <span className="text-accent">Place: click on canvas</span>}
       </div>
     </section>
-  );
-}
-
-function ModePlaceholder({ mode }: { mode: CircuitMode }) {
-  const copy: Record<Exclude<CircuitMode, "schematic">, string> = {
-    breadboard: "Visual breadboard layout (M5) — shares nets with the schematic.",
-    block: "High-level system block diagram (M5).",
-    ladder: "PLC-style ladder logic with contacts, coils, and rungs (M5).",
-  };
-  return (
-    <div className="flex h-full items-center justify-center text-xs text-text-3">
-      <div className="text-center">
-        <p className="font-medium capitalize text-text-2">{mode}</p>
-        <p>{copy[mode as Exclude<CircuitMode, "schematic">]}</p>
-        <p className="mt-1">Switch to Schematic mode to edit.</p>
-      </div>
-    </div>
   );
 }
 
