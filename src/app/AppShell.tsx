@@ -9,6 +9,8 @@ import { BottomDock } from "./BottomDock";
 import { Router } from "./Router";
 import { CommandPalette } from "./CommandPalette";
 import { CodeSidebar } from "@/features/code/CodeSidebar";
+import { SymbolPalette } from "@/features/circuit/SymbolPalette";
+import { CircuitInspector } from "@/features/circuit/CircuitInspector";
 import { useGlobalHotkeys, PALETTE_HOTKEY } from "@/lib/hotkeys";
 import { useAutosave } from "@/hooks/useAutosave";
 
@@ -83,6 +85,16 @@ function SecondarySidebar({ workspace }: { workspace: WorkspaceId }) {
       </aside>
     );
   }
+  if (workspace === "circuit") {
+    return (
+      <aside
+        aria-label="Secondary sidebar"
+        className="min-h-0 overflow-hidden border-l border-border-1 bg-bg-1 text-sm text-text-2"
+      >
+        <SymbolPalette />
+      </aside>
+    );
+  }
   return (
     <aside
       aria-label="Secondary sidebar"
@@ -101,7 +113,11 @@ function Inspector({ workspace }: { workspace: WorkspaceId }) {
       className="min-h-0 overflow-auto border-l border-border-1 bg-bg-1 p-3 text-sm"
     >
       <div className="mb-2 text-xs uppercase tracking-wider text-text-3">Inspector</div>
-      <div className="text-text-3">Properties for selection in {workspace}.</div>
+      {workspace === "circuit" ? (
+        <CircuitInspector />
+      ) : (
+        <div className="text-text-3">Properties for selection in {workspace}.</div>
+      )}
     </aside>
   );
 }

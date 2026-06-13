@@ -1,97 +1,101 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Download, Search, AlertTriangle, DollarSign } from "lucide-react";
+import { useCircuitStore } from "@/store/circuit";
+import { deriveBom, bomToCsv, bomTotal } from "./deriveBom";
 
-const MOCK_ROWS = [
-  {
-    ref: "R1,R2",
-    value: "10kΩ",
-    package_: "0805",
-    desc: "Resistor",
-    qty: 2,
-    price: 0.02,
-    total: 0.04,
-  },
-  {
-    ref: "C1,C2,C3",
-    value: "100nF",
-    package_: "0603",
-    desc: "Ceramic capacitor",
-    qty: 3,
-    price: 0.05,
-    total: 0.15,
-  },
-  {
-    ref: "U1",
-    value: "ATmega328P",
-    package_: "DIP-28",
-    desc: "Microcontroller",
-    qty: 1,
-    price: 2.5,
-    total: 2.5,
-  },
-  {
-    ref: "J1",
-    value: "Header 6-pin",
-    package_: "2.54mm",
-    desc: "Pin header",
-    qty: 1,
-    price: 0.3,
-    total: 0.3,
-  },
-];
-
+/**
+ * BOM workspace (M8). Derives the bill of materials live from the schematic
+ * components and exports CSV. When the Tauri backend is present, `bom_generate`
+ * / `export_bom_csv` can replace the client-side derivation.
+ */
 export function BomWorkspace() {
   const [filter, setFilter] = useState("");
-  const rows = MOCK_ROWS.filter(
+  const components = useCircuitStore((s) => s.components);
+
+  const allRows = useMemo(() => deriveBom(components), [components]);
+  const rows = allRows.filter(
     (r) =>
       !filter ||
       r.value.toLowerCase().includes(filter.toLowerCase()) ||
-      r.desc.toLowerCase().includes(filter.toLowerCase()),
+      r.description.toLowerCase().includes(filter.toLowerCase()) ||
+      r.refs.join(",").toLowerCase().includes(filter.toLowerCase()),
   );
+
+  const missingValue = allRows.filter((r) => !r.value.trim()).length;
+
+  function exportCsv() {
+    const csv = bomToCsv(allRows);
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "forge-bom.csv";
+    a.click();
+    URL.revokeObjectURL(url);
+  }
 
   return (
     <section data-testid="workspace-bom" className="flex h-full flex-col bg-bg-1">
       <div className="flex items-center gap-2 border-b border-border-1 px-3 py-1.5">
         <Search className="h-3.5 w-3.5 text-text-3" />
         <input
+          aria-label="Filter BOM"
           placeholder="Filter BOM..."
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
           className="input w-48 py-0.5 text-xs"
         />
         <div className="flex-1" />
-        <button className="btn-ghost flex items-center gap-1 text-xs" title="Export CSV">
-          <Download className="h-3 w-3" /> Export
+        <button
+          onClick={exportCsv}
+          disabled={allRows.length === 0}
+          className="btn-ghost flex items-center gap-1 text-xs disabled:opacity-40"
+          title="Export CSV"
+        >
+          <Download className="h-3 w-3" /> Export CSV
         </button>
       </div>
 
       <div className="flex-1 overflow-auto">
-        <table className="w-full text-xs">
-          <thead className="sticky top-0 bg-bg-2 text-text-3 uppercase tracking-wider text-[10px]">
-            <tr>
-              {["Ref", "Value", "Package", "Description", "Qty", "Unit $", "Total $"].map((h) => (
-                <th key={h} className="text-left px-3 py-1.5 border-b border-border-1 font-normal">
-                  {h}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((r, i) => (
-              <tr key={i} className="border-b border-border-1 hover:bg-surface-1">
-                <td className="px-3 py-1.5 text-text-1 font-mono">{r.ref}</td>
-                <td className="px-3 py-1.5 text-text-1">{r.value}</td>
-                <td className="px-3 py-1.5 text-text-2 font-mono">{r.package_}</td>
-                <td className="px-3 py-1.5 text-text-2">{r.desc}</td>
-                <td className="px-3 py-1.5 text-text-1">{r.qty}</td>
-                <td className="px-3 py-1.5 text-text-2">${r.price.toFixed(2)}</td>
-                <td className="px-3 py-1.5 text-text-1 font-medium">${r.total.toFixed(2)}</td>
+        {allRows.length === 0 ? (
+          <div className="flex h-full flex-col items-center justify-center gap-1 text-xs text-text-3">
+            <p className="font-medium text-text-2">No parts yet</p>
+            <p>Place components in the Circuit workspace — the BOM updates automatically.</p>
+          </div>
+        ) : (
+          <table className="w-full text-xs">
+            <thead className="sticky top-0 bg-bg-2 text-[10px] uppercase tracking-wider text-text-3">
+              <tr>
+                {["Ref", "Value", "Package", "Description", "Qty", "Unit $", "Total $"].map((h) => (
+                  <th
+                    key={h}
+                    className="border-b border-border-1 px-3 py-1.5 text-left font-normal"
+                  >
+                    {h}
+                  </th>
+                ))}
               </tr>
-            ))}
-          </tbody>
-        </table>
-        {rows.length === 0 && (
-          <div className="flex items-center justify-center py-12 text-text-3 text-xs">
+            </thead>
+            <tbody>
+              {rows.map((r) => (
+                <tr
+                  key={`${r.symbolId}|${r.value}`}
+                  className="border-b border-border-1 hover:bg-surface-1"
+                >
+                  <td className="px-3 py-1.5 font-mono text-text-1">{r.refs.join(", ")}</td>
+                  <td className="px-3 py-1.5 text-text-1">{r.value || "—"}</td>
+                  <td className="px-3 py-1.5 font-mono text-text-2">{r.package_}</td>
+                  <td className="px-3 py-1.5 text-text-2">{r.description}</td>
+                  <td className="px-3 py-1.5 text-text-1">{r.qty}</td>
+                  <td className="px-3 py-1.5 text-text-2">${r.unitPrice.toFixed(2)}</td>
+                  <td className="px-3 py-1.5 font-medium text-text-1">${r.total.toFixed(2)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+        {allRows.length > 0 && rows.length === 0 && (
+          <div className="flex items-center justify-center py-12 text-xs text-text-3">
             No BOM items match the filter.
           </div>
         )}
@@ -99,12 +103,12 @@ export function BomWorkspace() {
 
       <div className="flex items-center gap-3 border-t border-border-1 px-3 py-1 text-[11px] text-text-3">
         <span className="flex items-center gap-1">
-          <DollarSign className="h-3 w-3" /> Total: $
-          {rows.reduce((s, r) => s + r.total, 0).toFixed(2)}
+          <DollarSign className="h-3 w-3" /> Total: ${bomTotal(allRows).toFixed(2)}
         </span>
-        <span>{rows.length} unique parts</span>
+        <span>{allRows.length} unique parts</span>
         <span className="flex items-center gap-1">
-          <AlertTriangle className="h-3 w-3" /> 0 sourcing warnings
+          <AlertTriangle className="h-3 w-3" /> {missingValue} sourcing warning
+          {missingValue !== 1 ? "s" : ""}
         </span>
       </div>
     </section>

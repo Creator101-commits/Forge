@@ -30,3 +30,6 @@ logs/
 
 # OS
 Thumbs.db
+
+# TypeScript incremental build cache
+tsconfig.tsbuildinfo

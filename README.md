@@ -5,7 +5,12 @@
 
 This repository tracks the build described in [`prompt.md`](./prompt.md) following the milestone-by-milestone plan in [`plan.md`](./plan.md).
 
-The current state is **M2 — Code Workspace & Serial** (`v0.3.0`).
+The current state is **M4 — Schematic Editor** (`v0.5.0`, in progress). M0–M3 are built
+(foundations, project persistence, Monaco code workspace + serial, pluggable AI). The M4
+schematic frontend (symbol library, interactive SVG canvas with place/select/move/rotate/
+mirror/wire, ERC panel wired to the Rust ERC rules, component inspector) is implemented and
+covered by tests. See [`agentinstructions/NEXT.md`](./agentinstructions/NEXT.md) for the
+detailed gap analysis and the ordered plan to finish M4→M12.
 
 ## Repository layout
 

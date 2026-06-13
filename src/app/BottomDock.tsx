@@ -3,15 +3,18 @@ import { clsx } from "clsx";
 import { ProblemsPanel } from "@/features/code/ProblemsPanel";
 import { SerialMonitor } from "@/features/code/SerialMonitor";
 import { AiDock } from "@/features/ai/AiDock";
+import { ErcPanel } from "@/features/circuit/ErcPanel";
 import { useDiagnosticsStore } from "@/store/diagnostics";
+import { useCircuitStore } from "@/store/circuit";
 
-const TABS = ["AI", "Problems", "Output", "Serial Monitor"] as const;
+const TABS = ["AI", "Problems", "ERC", "Output", "Serial Monitor"] as const;
 type Tab = (typeof TABS)[number];
 
 export function BottomDock() {
   const [tab, setTab] = useState<Tab>("Problems");
   const problemCount = useDiagnosticsStore((s) => s.items.length);
-  const bare = tab === "Problems" || tab === "Serial Monitor";
+  const ercCount = useCircuitStore((s) => s.erc.length);
+  const bare = tab === "Problems" || tab === "Serial Monitor" || tab === "ERC";
   return (
     <section
       aria-label="Bottom dock"
@@ -38,6 +41,11 @@ export function BottomDock() {
                 {problemCount}
               </span>
             )}
+            {t === "ERC" && ercCount > 0 && (
+              <span className="ml-1.5 rounded-full bg-surface-2 px-1.5 text-[10px] text-text-2">
+                {ercCount}
+              </span>
+            )}
           </button>
         ))}
       </div>
@@ -49,6 +57,7 @@ export function BottomDock() {
       >
         {tab === "AI" && <AiDock />}
         {tab === "Problems" && <ProblemsPanel />}
+        {tab === "ERC" && <ErcPanel />}
         {tab === "Output" && <div>Compile output appears here in M9.</div>}
         {tab === "Serial Monitor" && <SerialMonitor />}
       </div>
