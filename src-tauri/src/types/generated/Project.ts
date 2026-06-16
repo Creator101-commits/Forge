@@ -5,23 +5,23 @@
  * a human-readable `forge-project.json` at the project root (source of truth
  * for quick open + diffing).
  */
-export type Project = { id: string, name: string, description: string | null, 
+export type Project = { id: string, name: string, description: string | null,
 /**
  * Unix epoch seconds.
  */
-created_at: number, 
+created_at: number,
 /**
  * Unix epoch seconds.
  */
-updated_at: number, 
+updated_at: number,
 /**
  * Target board profile id, e.g. `"uno"`, `"esp32"`. None until chosen.
  */
-board_target: string | null, 
+board_target: string | null,
 /**
  * Working units, e.g. `"mm"` or `"mil"`.
  */
-units: string, tags: Array<string>, 
+units: string, tags: Array<string>,
 /**
  * Default AI persona for this project: `"Engineer" | "Mentor" | "Student Helper"`.
  */

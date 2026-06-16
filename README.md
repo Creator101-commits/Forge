@@ -5,12 +5,12 @@
 
 This repository tracks the build described in [`prompt.md`](./prompt.md) following the milestone-by-milestone plan in [`plan.md`](./plan.md).
 
-The current state is **M4 — Schematic Editor** (`v0.5.0`, in progress). M0–M3 are built
-(foundations, project persistence, Monaco code workspace + serial, pluggable AI). The M4
-schematic frontend (symbol library, interactive SVG canvas with place/select/move/rotate/
-mirror/wire, ERC panel wired to the Rust ERC rules, component inspector) is implemented and
-covered by tests. See [`agentinstructions/NEXT.md`](./agentinstructions/NEXT.md) for the
-detailed gap analysis and the ordered plan to finish M4→M12.
+The current state is **M11 — QA, Security, Hardening** (`v0.12.0-rc`). All milestones M0–M11
+are built: foundations, project persistence, Monaco code workspace + serial, pluggable AI
+(with persona switcher, preview diff, project context, copy button), schematic editor, circuit
+modes, PCB workspace + DRC, CAD workspace, BOM + export pipeline, compile + upload toolchain,
+demo project, onboarding tour, crash recovery, and CI with frontend coverage gates, E2E tests,
+and security audits. See [`agentinstructions/NEXT.md`](./agentinstructions/NEXT.md) for remaining polish items.
 
 ## Repository layout
 
@@ -136,12 +136,12 @@ See [`plan.md`](./plan.md). Each calendar month closes with a tagged release and
 | M1        | Project persistence + activity rail + command palette + settings v1 | v0.2.0     |
 | M2        | Monaco code workspace + serial (this commit)                        | v0.3.0     |
 | M3        | Pluggable AI providers + approval-gated code patching               | v0.4.0     |
-| M4        | Schematic editor + ERC                                              | v0.5.0     |
-| M5        | Circuit: breadboard, block, ladder modes                            | v0.6.0     |
-| M6        | PCB workspace + DRC + Gerber                                        | v0.7.0     |
-| M7        | CAD workspace                                                       | v0.8.0     |
-| M8        | BOM + full export pipeline                                          | v0.9.0     |
-| M9        | Compile + upload toolchain                                          | v0.10.0    |
-| M10       | Demo, onboarding, perf, accessibility                               | v0.11.0    |
-| M11       | QA, security, fuzz, migrations                                      | v0.12.0-rc |
+| M4        | Schematic editor + ERC                                              | v0.5.0 ✔  |
+| M5        | Circuit: breadboard, block, ladder modes                            | v0.6.0 ✔  |
+| M6        | PCB workspace + DRC + Gerber                                        | v0.7.0 ✔  |
+| M7        | CAD workspace                                                       | v0.8.0 ✔  |
+| M8        | BOM + full export pipeline                                          | v0.9.0 ✔  |
+| M9        | Compile + upload toolchain                                          | v0.10.0 ✔ |
+| M10       | Demo, onboarding, perf, accessibility                               | v0.11.0 ✔ |
+| M11       | QA, security, fuzz, migrations                                      | v0.12.0-rc ✔ |
 | M12       | Release engineering: signed installers, auto-update, docs           | v1.0.0     |

@@ -6,107 +6,180 @@ import {
   Plus,
   Trash2,
   AlertTriangle,
+  ChevronDown,
+  ChevronUp,
   Grid3X3,
   Eye,
   EyeOff,
+  Layers,
+  Cpu,
 } from "lucide-react";
+import { usePcbStore, type LayerId } from "@/store/pcb";
+import { PcbCanvas } from "@/features/pcb/PcbCanvas";
+import { FOOTPRINTS } from "@/features/pcb/footprints";
 
-const LAYERS = ["Top Copper", "Bottom Copper", "Silkscreen", "Soldermask", "Outline", "Drills"];
+const LAYER_NAMES: { display: string; id: LayerId }[] = [
+  { display: "Top Copper", id: "top" },
+  { display: "Bottom Copper", id: "bottom" },
+  { display: "Silkscreen", id: "silk" },
+  { display: "Outline", id: "outline" },
+];
 
 export function PcbWorkspace() {
-  const [activeLayer, setActiveLayer] = useState("Top Copper");
-  const [visibleLayers, setVisibleLayers] = useState(new Set(LAYERS));
-
-  const toggleLayer = (layer: string) => {
-    const next = new Set(visibleLayers);
-    if (next.has(layer)) next.delete(layer);
-    else next.add(layer);
-    setVisibleLayers(next);
-  };
+  const activeLayer = usePcbStore((s) => s.activeLayer);
+  const layerVisible = usePcbStore((s) => s.layerVisible);
+  const setActiveLayer = usePcbStore((s) => s.setActiveLayer);
+  const toggleLayer = usePcbStore((s) => s.toggleLayer);
+  const tool = usePcbStore((s) => s.tool);
+  const setTool = usePcbStore((s) => s.setTool);
+  const armPlace = usePcbStore((s) => s.armPlace);
+  const board = usePcbStore((s) => s.board);
+  const drc = usePcbStore((s) => s.drc);
+  const runDrc = usePcbStore((s) => s.runDrc);
+  const [drcExpanded, setDrcExpanded] = useState(false);
 
   return (
     <section data-testid="workspace-pcb" className="flex h-full flex-col bg-bg-1">
       {/* Toolbar */}
       <div className="flex items-center gap-1 border-b border-border-1 px-2 py-1">
-        <ToolButton icon={MousePointer2} label="Select" active />
-        <ToolButton icon={Plus} label="Place footprint" />
-        <ToolButton icon={PenLine} label="Route trace" />
-        <ToolButton icon={Trash2} label="Delete" />
-        <div className="h-5 w-px bg-border-1 mx-1" />
-        <button className="rounded-1 p-1 text-text-3 hover:text-text-1" title="Toggle grid">
+        <ToolButton
+          icon={MousePointer2}
+          label="Select"
+          active={tool === "select"}
+          onClick={() => setTool("select")}
+        />
+        <ToolButton
+          icon={Plus}
+          label="Place footprint"
+          active={tool === "place"}
+          onClick={() => setTool("place")}
+        />
+        <ToolButton
+          icon={PenLine}
+          label="Route trace"
+          active={tool === "route"}
+          onClick={() => setTool("route")}
+        />
+        <ToolButton
+          icon={Trash2}
+          label="Delete"
+          active={tool === "delete"}
+          onClick={() => setTool("delete")}
+        />
+        <div className="mx-1 h-5 w-px bg-border-1" />
+        <button
+          className="rounded-1 p-1 text-text-3 hover:text-text-1 focus-visible:ring-2 focus-visible:ring-accent"
+          title="Toggle grid"
+        >
           <Grid3X3 className="h-3.5 w-3.5" />
         </button>
         <div className="flex-1" />
-        <span className="text-[10px] text-text-3">{activeLayer}</span>
       </div>
 
-      <div className="flex flex-1 min-h-0">
-        {/* Layer panel */}
-        <aside className="w-40 shrink-0 border-r border-border-1 bg-bg-2 p-2 flex flex-col gap-1">
-          <div className="text-[10px] uppercase tracking-wider text-text-3 mb-1">Layers</div>
-          {LAYERS.map((l) => (
+      <div className="flex min-h-0 flex-1">
+        {/* Layers panel */}
+        <aside className="flex w-40 shrink-0 flex-col gap-1 border-r border-border-1 bg-bg-2 p-2">
+          <div className="mb-1 flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-text-3">
+            <Layers className="h-3 w-3" />
+            Layers
+          </div>
+          {LAYER_NAMES.map(({ display, id }) => (
             <button
-              key={l}
-              onClick={() => setActiveLayer(l)}
+              key={display}
+              onClick={() => setActiveLayer(id)}
               className={clsx(
-                "flex items-center gap-1.5 rounded-1 px-2 py-1 text-[11px] text-left transition-colors",
-                activeLayer === l ? "bg-accent/15 text-accent" : "text-text-2 hover:bg-surface-1",
+                "flex items-center gap-1.5 rounded-1 px-2 py-1 text-[11px] text-left transition-colors focus-visible:ring-2 focus-visible:ring-accent",
+                activeLayer === id
+                  ? "bg-accent/15 text-accent"
+                  : "text-text-2 hover:bg-surface-1",
               )}
             >
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  toggleLayer(l);
+                  toggleLayer(id);
                 }}
-                className="p-0.5"
+                className="rounded-1 p-0.5 focus-visible:ring-2 focus-visible:ring-accent"
+                aria-label={`Toggle ${display} visibility`}
               >
-                {visibleLayers.has(l) ? (
+                {layerVisible[id] ? (
                   <Eye className="h-3 w-3" />
                 ) : (
                   <EyeOff className="h-3 w-3 opacity-50" />
                 )}
               </button>
-              <span className={visibleLayers.has(l) ? "" : "opacity-50"}>{l}</span>
+              <span className={layerVisible[id] ? "" : "opacity-50"}>{display}</span>
             </button>
           ))}
         </aside>
 
         {/* Canvas */}
-        <div className="flex-1 overflow-hidden flex items-center justify-center bg-bg-0">
-          <div className="flex flex-col items-center gap-3 text-text-3">
-            <svg width="300" height="200" className="opacity-10">
-              <defs>
-                <pattern id="pcb-grid" width="10" height="10" patternUnits="userSpaceOnUse">
-                  <path d="M 10 0 L 0 0 0 10" fill="none" stroke="currentColor" strokeWidth="0.3" />
-                </pattern>
-              </defs>
-              <rect width="300" height="200" fill="url(#pcb-grid)" />
-              <rect
-                x="60"
-                y="30"
-                width="180"
-                height="140"
-                rx="4"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1"
-              />
-            </svg>
-            <div className="text-center text-xs">
-              <p className="text-text-2 font-medium">PCB Editor</p>
-              <p>Place footprints, route traces, and define board outline.</p>
-              <p className="mt-1 text-text-3">Footprint library loads in the left sidebar.</p>
-            </div>
-          </div>
+        <div className="flex flex-1 overflow-hidden">
+          <PcbCanvas />
         </div>
+
+        {/* Footprint palette */}
+        <aside className="flex w-40 shrink-0 flex-col gap-1 border-l border-border-1 bg-bg-2 p-2">
+          <div className="mb-1 flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-text-3">
+            <Cpu className="h-3 w-3" />
+            Footprints
+          </div>
+          {FOOTPRINTS.map((fp) => (
+            <button
+              key={fp.id}
+              onClick={() => armPlace(fp.id)}
+              className="flex items-center gap-1.5 rounded-1 px-2 py-1 text-[11px] text-left text-text-2 transition-colors hover:bg-surface-1 focus-visible:ring-2 focus-visible:ring-accent"
+              title={`Place ${fp.name}`}
+            >
+              {fp.name}
+            </button>
+          ))}
+        </aside>
       </div>
 
-      <div className="flex items-center gap-3 border-t border-border-1 px-3 py-1 text-[11px] text-text-3">
-        <span>Board: 50×30mm</span>
-        <span className="flex items-center gap-1">
-          <AlertTriangle className="h-3 w-3" /> 0 DRC issues
-        </span>
-        <span>Grid: 0.1mm</span>
+      {/* Status bar */}
+      <div className="flex flex-col border-t border-border-1">
+        <div className="flex items-center gap-3 px-3 py-1 text-[11px] text-text-3">
+          <span>
+            Board: {board.width}×{board.height}mm
+          </span>
+          <button
+            onClick={() => setDrcExpanded(!drcExpanded)}
+            className="flex items-center gap-1 hover:text-text-1"
+          >
+            {drcExpanded ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
+            <AlertTriangle className="h-3 w-3" />
+            {drc.length} DRC issues
+          </button>
+          <span>Grid: 0.1mm</span>
+          <div className="flex-1" />
+        </div>
+        {drcExpanded && (
+          <div className="max-h-32 overflow-y-auto border-t border-border-1 px-3 py-1">
+            {drc.length === 0 ? (
+              <p className="py-0.5 text-[11px] text-text-3">No DRC issues.</p>
+            ) : (
+              drc.map((issue, i) => (
+                <div
+                  key={i}
+                  className={clsx(
+                    "flex items-center gap-2 py-0.5 text-[11px]",
+                    issue.severity === "Error" ? "text-red-400" : "text-yellow-400",
+                  )}
+                >
+                  <span className="font-medium">{issue.severity}</span>
+                  <span>{issue.message}</span>
+                </div>
+              ))
+            )}
+          </div>
+        )}
+        <button
+          onClick={() => runDrc()}
+          className="self-start px-3 py-0.5 text-[10px] text-text-3 hover:text-text-1"
+        >
+          Run DRC
+        </button>
       </div>
     </section>
   );
@@ -116,18 +189,22 @@ function ToolButton({
   icon: Icon,
   label,
   active,
+  onClick,
 }: {
   icon: typeof MousePointer2;
   label: string;
   active?: boolean;
+  onClick?: () => void;
 }) {
   return (
     <button
       className={clsx(
-        "rounded-1 p-1.5 transition-colors",
+        "rounded-1 p-1.5 transition-colors focus-visible:ring-2 focus-visible:ring-accent",
         active ? "bg-accent/15 text-accent" : "text-text-3 hover:text-text-1",
       )}
       title={label}
+      type="button"
+      onClick={onClick}
     >
       <Icon className="h-3.5 w-3.5" />
     </button>

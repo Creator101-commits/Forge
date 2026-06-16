@@ -399,6 +399,67 @@ pub fn revert_patch_impl(state: &AppState, action_id: &str) -> Result<()> {
     Ok(())
 }
 
+/// Preview a patch action diff without applying it. Returns a unified diff
+/// string showing the changes.
+pub fn preview_patch_impl(state: &AppState, action: &AiAction) -> Result<String> {
+    let root = active_root(state)?;
+
+    match action {
+        AiAction::PatchRange {
+            path,
+            start_line,
+            end_line,
+            replacement,
+        } => {
+            let existing = fs::read_file(&root, path)?;
+            let diff = crate::ai::actions::preview_patch(&existing, *start_line, *end_line, replacement);
+            Ok(diff)
+        }
+        AiAction::InsertBefore { path, line, content } => {
+            let existing = fs::read_file(&root, path)?;
+            let diff = crate::ai::actions::preview_patch(&existing, *line, *line + 1, content);
+            Ok(diff)
+        }
+        AiAction::UpdateFile { path, content } => {
+            let existing = match fs::read_file(&root, path) {
+                Ok(c) => c,
+                Err(_) => String::new(),
+            };
+            let diff = crate::ai::actions::preview_patch(&existing, 0, 0, content);
+            Ok(diff)
+        }
+        AiAction::CreateFile { path, content } => {
+            let existing = String::new();
+            let diff = format!("+ (new file) {path}\n{content}");
+            Ok(diff)
+        }
+        AiAction::DeleteFile { path } => {
+            let existing = match fs::read_file(&root, path) {
+                Ok(c) => c,
+                Err(_) => String::new(),
+            };
+            let diff = format!("- (delete) {path}\n{existing}");
+            Ok(diff)
+        }
+    }
+}
+
+/// Reject an AI action (proposed but not applied). Logs to event_log.
+pub fn reject_action_impl(state: &AppState, action_id: &str, reason: &str) -> Result<()> {
+    let root = active_root(state)?;
+
+    let _ = store::append_event_at(
+        &root,
+        "ai.action.rejected",
+        &serde_json::json!({
+            "action_id": action_id,
+            "reason": reason,
+        }),
+    );
+
+    Ok(())
+}
+
 // ── Tauri commands ──
 
 #[tauri::command]
@@ -439,6 +500,20 @@ pub fn ai_apply_patch(state: State<'_, AppState>, action: AiAction) -> Result<Ac
 #[tauri::command]
 pub fn ai_revert_patch(state: State<'_, AppState>, action_id: String) -> Result<()> {
     revert_patch_impl(&state, &action_id)
+}
+
+#[tauri::command]
+pub fn ai_preview_patch(state: State<'_, AppState>, action: AiAction) -> Result<String> {
+    preview_patch_impl(&state, &action)
+}
+
+#[tauri::command]
+pub fn ai_reject_action(
+    state: State<'_, AppState>,
+    action_id: String,
+    reason: Option<String>,
+) -> Result<()> {
+    reject_action_impl(&state, &action_id, &reason.unwrap_or_default())
 }
 
 #[cfg(test)]

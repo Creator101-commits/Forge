@@ -1,0 +1,114 @@
+{
+  "name": "Temperature Monitor v1 — Enclosure",
+  "description": "3D-printed enclosure with vent slots for the temperature monitor project",
+  "objects": [
+    {
+      "id": "base", "parentId": null,
+      "name": "Enclosure Base",
+      "kind": "box",
+      "x": 0, "y": 0, "z": 0,
+      "rx": 0, "ry": 0, "rz": 0,
+      "sx": 100, "sy": 70, "sz": 25,
+      "color": "#2a2a2a", "locked": false, "hidden": false,
+      "metadataJson": "{\"material\":\"ABS\",\"wall_thickness\":2}"
+    },
+    {
+      "id": "lid", "parentId": null,
+      "name": "Enclosure Lid",
+      "kind": "box",
+      "x": 0, "y": 0, "z": 27,
+      "rx": 0, "ry": 0, "rz": 0,
+      "sx": 100, "sy": 70, "sz": 3,
+      "color": "#444444", "locked": false, "hidden": false,
+      "metadataJson": "{\"material\":\"ABS\",\"translucent\":true}"
+    },
+    {
+      "id": "lcd-window", "parentId": null,
+      "name": "LCD Display Window",
+      "kind": "box",
+      "x": 10, "y": 10, "z": 26,
+      "rx": 0, "ry": 0, "rz": 0,
+      "sx": 72, "sy": 25, "sz": 2,
+      "color": "#88ccff80", "locked": false, "hidden": false,
+      "metadataJson": "{\"cutout\":false,\"material\":\"clear_acrylic\"}"
+    },
+    {
+      "id": "vent-slots", "parentId": null,
+      "name": "Ventilation Slots",
+      "kind": "box",
+      "x": 40, "y": 0, "z": 20,
+      "rx": 0, "ry": 0, "rz": 0,
+      "sx": 30, "sy": 4, "sz": 10,
+      "color": "#000000", "locked": false, "hidden": false,
+      "metadataJson": "{\"cutout\":true}"
+    },
+    {
+      "id": "sensor-hole", "parentId": null,
+      "name": "Sensor Probe Hole",
+      "kind": "cylinder",
+      "x": 80, "y": 35, "z": 0,
+      "rx": 0, "ry": 0, "rz": 0,
+      "sx": 6, "sy": 6, "sz": 5,
+      "color": "#000000", "locked": false, "hidden": false,
+      "metadataJson": "{\"cutout\":true}"
+    },
+    {
+      "id": "usb-cutout", "parentId": null,
+      "name": "USB Cable Cutout",
+      "kind": "box",
+      "x": 50, "y": 0, "z": 5,
+      "rx": 0, "ry": 0, "rz": 0,
+      "sx": 15, "sy": 8, "sz": 8,
+      "color": "#000000", "locked": false, "hidden": false,
+      "metadataJson": "{\"cutout\":true}"
+    },
+    {
+      "id": "mounting-boss-1", "parentId": null,
+      "name": "Mounting Boss Front Left",
+      "kind": "cylinder",
+      "x": 10, "y": 10, "z": 3,
+      "rx": 0, "ry": 0, "rz": 0,
+      "sx": 6, "sy": 6, "sz": 6,
+      "color": "#555555", "locked": false, "hidden": false,
+      "metadataJson": "{\"material\":\"ABS\",\"screw\":\"M3\"}"
+    },
+    {
+      "id": "mounting-boss-2", "parentId": null,
+      "name": "Mounting Boss Front Right",
+      "kind": "cylinder",
+      "x": 90, "y": 10, "z": 3,
+      "rx": 0, "ry": 0, "rz": 0,
+      "sx": 6, "sy": 6, "sz": 6,
+      "color": "#555555", "locked": false, "hidden": false,
+      "metadataJson": "{\"material\":\"ABS\",\"screw\":\"M3\"}"
+    },
+    {
+      "id": "mounting-boss-3", "parentId": null,
+      "name": "Mounting Boss Rear Left",
+      "kind": "cylinder",
+      "x": 10, "y": 60, "z": 3,
+      "rx": 0, "ry": 0, "rz": 0,
+      "sx": 6, "sy": 6, "sz": 6,
+      "color": "#555555", "locked": false, "hidden": false,
+      "metadataJson": "{\"material\":\"ABS\",\"screw\":\"M3\"}"
+    },
+    {
+      "id": "mounting-boss-4", "parentId": null,
+      "name": "Mounting Boss Rear Right",
+      "kind": "cylinder",
+      "x": 90, "y": 60, "z": 3,
+      "rx": 0, "ry": 0, "rz": 0,
+      "sx": 6, "sy": 6, "sz": 6,
+      "color": "#555555", "locked": false, "hidden": false,
+      "metadataJson": "{\"material\":\"ABS\",\"screw\":\"M3\"}"
+    }
+  ],
+  "views": [
+    {
+      "id": "default",
+      "name": "Default",
+      "cameraJson": "{\"position\":[140,100,120],\"target\":[50,35,15],\"zoom\":1}"
+    }
+  ],
+  "units": "mm"
+}
