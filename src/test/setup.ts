@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom/vitest";
-import { afterEach, vi } from "vitest";
+import { afterEach, vi, beforeEach } from "vitest";
 import { cleanup } from "@testing-library/react";
 import { createElement, useEffect } from "react";
 
@@ -52,6 +52,40 @@ if (!("ResizeObserver" in window)) {
     disconnect() {}
   };
 }
+
+// Ensure localStorage is available (jsdom may not expose it globally).
+let storage: Record<string, string> = {};
+Object.defineProperty(globalThis, "localStorage", {
+  value: {
+    getItem: (k: string) => storage[k] ?? null,
+    setItem: (k: string, v: string) => { storage[k] = v; },
+    removeItem: (k: string) => { delete storage[k]; },
+    clear: () => { storage = {}; },
+    get length() { return Object.keys(storage).length; },
+    key: (i: number) => Object.keys(storage)[i] ?? null,
+  },
+  configurable: true,
+  writable: true,
+});
+beforeEach(() => { storage = {}; });
+
+// R3F / drei can't create WebGL contexts under jsdom. Global mock so any
+// test rendering a tree with R3F components (e.g. CadWorkspace) doesn't crash.
+vi.mock("@react-three/fiber", () => {
+  const stub = new Proxy(
+    { Canvas: ({ children }: { children: React.ReactNode }) => children },
+    { get: (target, prop) => (prop in target ? target[prop as keyof typeof target] : () => null) },
+  );
+  return { ...stub };
+});
+vi.mock("@react-three/drei", () => ({
+  OrbitControls: () => null,
+  TransformControls: () => null,
+  Text: () => null,
+  Html: () => null,
+  useGLTF: () => ({ scene: null }),
+  useAnimations: () => ({}),
+}));
 
 // Stable platform default for tests; individual tests can override navigator.
 if (!("matchMedia" in window)) {

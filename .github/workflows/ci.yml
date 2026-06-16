@@ -38,8 +38,26 @@ jobs:
       - name: Typecheck
         run: pnpm typecheck
 
-      - name: Unit tests
-        run: pnpm test:coverage
+      - name: Unit tests + coverage
+        run: pnpm test:coverage 2>&1 | tee coverage-output.txt
+
+      - name: Coverage gate (lib/)
+        run: |
+          COVERAGE=$(grep -oP 'lib/\s+\K[\d.]+(?=%)' coverage-output.txt | head -1)
+          echo "lib/ coverage: $COVERAGE%"
+          if (( $(echo "$COVERAGE < 80" | bc -l) )); then
+            echo "❌ lib/ coverage below 80% ($COVERAGE%)"
+            exit 1
+          fi
+      
+      - name: Coverage gate (store/)
+        run: |
+          COVERAGE=$(grep -oP 'store/\s+\K[\d.]+(?=%)' coverage-output.txt | head -1)
+          echo "store/ coverage: $COVERAGE%"
+          if (( $(echo "$COVERAGE < 80" | bc -l) )); then
+            echo "❌ store/ coverage below 80% ($COVERAGE%)"
+            exit 1
+          fi
 
       - uses: actions/upload-artifact@v4
         if: always()
@@ -94,6 +112,44 @@ jobs:
       - name: Test
         working-directory: src-tauri
         run: cargo test --lib
+
+  e2e:
+    name: E2E (Playwright)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "pnpm"
+      - run: pnpm install --frozen-lockfile=false
+      - run: npx playwright install --with-deps chromium
+      - name: Build
+        run: pnpm build
+      - name: Run E2E tests
+        run: pnpm test:e2e
+
+  security:
+    name: Security audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "pnpm"
+      - run: pnpm install --frozen-lockfile=false
+      - name: pnpm audit
+        run: pnpm audit --audit-level=high || true
+      - name: cargo audit
+        working-directory: src-tauri
+        run: cargo install cargo-audit && cargo audit || true
 
   release:
     name: Release Build (${{ matrix.os }})

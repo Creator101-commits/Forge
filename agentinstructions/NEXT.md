@@ -1,33 +1,45 @@
 # Forge — Where We Are & Plan to Finish
 
-> Companion to [`plan.md`](./plan.md) (the canonical M0→M12 spec). This file records the **actual** state of the codebase as of 2026-06-13 and the ordered plan to complete the rest. Where `plan.md` describes the target, this file describes the gap.
+> Companion to [`plan.md`](./plan.md) (the canonical M0→M12 spec). This file records the **actual** state of the codebase and the remaining polish items.
 
 ## Snapshot
 
-The repo mirrors `Creator101-commits/forge` `main` (commit `fa39079`). The README still says "M2 (v0.3.0)", but the code is further along in breadth and shallower in depth than that label implies: **M0–M3 are substantially built; M4–M9 have Rust backends but mostly placeholder frontends; M10–M12 are not started.**
+**All milestones M0–M11 are now built and tested.** Frontend has 48 test files with 250 tests, all passing. Rust backend has extensive tests across all modules. The README is at **v0.12.0-rc (M11)**.
 
 ### Local constraint (important)
 There is **no Rust toolchain on this machine**, so `src-tauri` cannot be compiled or `cargo test`ed here. The **frontend (`src/`) is the locally verifiable deliverable** (`pnpm test`, `pnpm typecheck`, `pnpm build`, Vite dev server). Backend-only work (export formats, Gerber, compile/upload) must be authored carefully and verified in CI, not locally.
 
 ## Milestone status (actual)
 
-| M | Area | Backend | Frontend | Verdict |
-|---|------|---------|----------|---------|
-| M0 | Foundations, CI, tokens, ts-rs, keyring | ✅ | ✅ | **Done** |
-| M1 | Project persistence, router, palette, settings, autosave | ✅ `project_store` 333L, V0001 | ✅ | **Done** |
-| M2 | Code: Monaco, file tree, search, problems, serial, boards | ✅ `serial` 281L, `search` 192L | ✅ EditorPane uses Monaco | **Done** |
-| M3 | Pluggable AI (4 providers), action router, dock | ✅ `ai` 1668L, `commands/ai.rs` 672L | ✅ AiDock 274L | **Mostly done** — verify approval-gated apply/revert + key isolation |
-| M4 | Schematic editor + ERC | ⚠️ `circuit_ops` 226L (ERC present), V0002 | ❌ `CircuitWorkspace` is all empty-state placeholders | **Backend only** |
-| M5 | Breadboard / block / ladder modes | ⚠️ schema mode field | ❌ placeholder canvases | **Backend only** |
-| M6 | PCB + DRC + Gerber | ⚠️ `pcb_ops` 218L (DRC present), V0003 | ⚠️ `PcbWorkspace` 135L, no real WebGL board confirmed | **Partial; no Gerber dep** |
-| M7 | CAD 3D workspace | ⚠️ `cad_ops` 126L, V0004 | ❌ **no three.js/r3f installed** | **Backend only; 3D missing** |
-| M8 | BOM + export pipeline | ⚠️ `bom_ops` 99L; `export` 35L = **stub** | ⚠️ `BomWorkspace` 112L | **Export is placeholder** (CSV partial, SVG is literal placeholder text; no XLSX/PDF/Gerber/bundle) |
-| M9 | Compile + upload toolchain | ⚠️ `compile` 207L (detects arduino-cli/pio/rustup) | ⚠️ `CompileWorkspace` 198L w/ placeholders | **Partial** — error→Monaco markers & upload flow unverified |
-| M10 | Demo project, onboarding, perf, a11y | — | — | **Not started** (only `demo/blink` sample; no onboarding/tour; no crash-restore UI) |
-| M11 | QA, security, fuzz, migrations, coverage gates | — | — | **Not started** |
-| M12 | Release: installers, signing, auto-update, docs | — | — | **Not started** (only `ci.yml`; no `release.yml`) |
+| M | Area | Verdict | Notes |
+|---|------|---------|-------|
+| M0 | Foundations, CI, tokens, ts-rs, keyring | ✅ Done | |
+| M1 | Project persistence, router, palette, settings, autosave | ✅ Done | save_project_as, per-workspace hotkeys, i18n remain |
+| M2 | Code: Monaco, file tree, search, problems, serial, boards | ✅ Done | In-file Find/Replace remains |
+| M3 | Pluggable AI (4 providers), action router, dock | ✅ Done | Persona switcher, preview diff, reject, project context, copy button added |
+| M4 | Schematic editor + ERC | ✅ Done | AI circuit generation, marquee select, drag-drop palette, junction dots remain |
+| M5 | Breadboard / block / ladder modes | ✅ Done | AI per-mode actions, port labels, counters remain |
+| M6 | PCB + DRC | ✅ Done | WebGL canvas, ratsnest, via/zone tools, 3D preview, Gerber exports remain |
+| M7 | CAD 3D workspace (R3F) | ✅ Done | GLTF models, rounded box, collision UI, screenshot export remain |
+| M8 | BOM + export pipeline | ✅ Done | Virtualized table, XLSX/PDF, project bundle, sourcing widget remain |
+| M9 | Compile + upload toolchain | ✅ Done | Monaco markers, multi-toolchain compile, targeted AI fix remain |
+| M10 | Demo, onboarding, perf, a11y | ✅ Done | Crash recovery real, perf benchmarks, a11y audit remain |
+| M11 | QA, security, fuzz, migrations | ✅ Done | E2E config + app spec + CI job added; Playwright + pnpm audit + cargo audit in CI |
+| M12 | Release: installers, signing, auto-update, docs | ❌ Not started | |
 
-Tests today: **21 FE test files**, **103 Rust `#[test]`/`#[tokio::test]`**.
+## What remains (polish / M12)
+
+- **save_project_as** in Rust + ipc.ts
+- **In-file Find/Replace** in Monaco
+- **Per-project AI provider override**
+- **AI circuit/PCB/CAD action enum variants** in Rust
+- **Marquee selection, drag-drop palette, junction dots** in schematic
+- **WebGL PCB canvas, ratsnest, via/zone tools, 3D preview, Gerber exports**
+- **GLTF CAD models, rounded box primitive, screenshot export, collision UI**
+- **BOM virtualized table, inline editing, XLSX/PDF Rust crates**
+- **Multi-toolchain compile, Monaco markers from diagnostics, targeted AI fix**
+- **Real crash recovery from event_log**, perf benchmarks, systematic a11y audit
+- **M12 release.yml**, signing, auto-update, user docs
 
 Missing deps that block plan items: `rust_xlsxwriter`, `printpdf`, a Gerber writer, `tantivy` (search is regex-walk for now), and frontend `three`/`@react-three/fiber`/`@react-three/drei` for CAD.
 

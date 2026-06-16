@@ -1,0 +1,42 @@
+{
+  "name": "Temperature Monitor v1 — PCB",
+  "width": 60,
+  "height": 50,
+  "layers": [
+    { "id": "top", "name": "Top Copper", "kind": "top_copper", "color": "#ff4444", "visible": true },
+    { "id": "bottom", "name": "Bottom Copper", "kind": "bottom_copper", "color": "#4444ff", "visible": true },
+    { "id": "silkscreen", "name": "Silkscreen", "kind": "silkscreen", "color": "#ffffff", "visible": true },
+    { "id": "soldermask", "name": "Soldermask", "kind": "soldermask", "color": "#00aa00", "visible": true },
+    { "id": "outline", "name": "Board Outline", "kind": "outline", "color": "#ffff44", "visible": true }
+  ],
+  "boardOutline": {
+    "id": "outline-main",
+    "polygonJson": "[[0,0],[6000,0],[6000,5000],[0,5000]]"
+  },
+  "footprints": [
+    { "id": "fp-u1", "componentRef": "U1", "libraryId": "arduino_uno_shield", "x": 1000, "y": 2500, "rotation": 0, "side": "top" },
+    { "id": "fp-u2", "componentRef": "U2", "libraryId": "to92", "x": 3500, "y": 1200, "rotation": 0, "side": "top" },
+    { "id": "fp-lcd1", "componentRef": "LCD1", "libraryId": "lcd_i2c_16x2", "x": 3500, "y": 3500, "rotation": 0, "side": "top" },
+    { "id": "fp-r1", "componentRef": "R1", "libraryId": "axial_0.4in", "x": 2500, "y": 2800, "rotation": 0, "side": "top" },
+    { "id": "fp-r2", "componentRef": "R2", "libraryId": "axial_0.4in", "x": 2500, "y": 3100, "rotation": 0, "side": "top" },
+    { "id": "fp-r3", "componentRef": "R3", "libraryId": "axial_0.4in", "x": 4200, "y": 3800, "rotation": 0, "side": "top" },
+    { "id": "fp-c1", "componentRef": "C1", "libraryId": "cap_disc_5mm", "x": 3800, "y": 1600, "rotation": 0, "side": "top" },
+    { "id": "fp-c2", "componentRef": "C2", "libraryId": "cap_rad_5mm", "x": 1800, "y": 1800, "rotation": 0, "side": "top" }
+  ],
+  "traces": [
+    { "id": "t-vcc-sensor", "netId": "net-vcc-sensor", "layerId": "top", "pointsJson": "[[1500,2000],[3500,1200]]", "width": 0.5 },
+    { "id": "t-vcc-lcd", "netId": "net-vcc-lcd", "layerId": "top", "pointsJson": "[[1500,2000],[3500,3200]]", "width": 0.5 },
+    { "id": "t-gnd", "netId": "net-gnd", "layerId": "top", "pointsJson": "[[1800,3200],[3500,1400],[3500,3800]]", "width": 0.5 },
+    { "id": "t-sensor-out", "netId": "net-sensor-out", "layerId": "top", "pointsJson": "[[3500,1200],[1800,2200]]", "width": 0.3 },
+    { "id": "t-sda", "netId": "net-sda", "layerId": "top", "pointsJson": "[[1800,2600],[2500,2800],[3500,3500]]", "width": 0.3 },
+    { "id": "t-scl", "netId": "net-scl", "layerId": "top", "pointsJson": "[[1800,2800],[2500,3100],[3500,3700]]", "width": 0.3 },
+    { "id": "t-decouple", "netId": "net-decouple", "layerId": "top", "pointsJson": "[[3800,1600],[3500,1300]]", "width": 0.4 },
+    { "id": "t-decouple-gnd", "netId": "net-decouple-gnd", "layerId": "top", "pointsJson": "[[3900,1700],[3500,1400]]", "width": 0.4 },
+    { "id": "t-bulk", "netId": "net-bulk", "layerId": "top", "pointsJson": "[[1800,1800],[1500,2000]]", "width": 0.4 },
+    { "id": "t-bulk-gnd", "netId": "net-bulk-gnd", "layerId": "top", "pointsJson": "[[1900,1900],[1800,3200]]", "width": 0.4 },
+    { "id": "t-lcd-bl", "netId": "net-lcd-backlight", "layerId": "top", "pointsJson": "[[4200,3800],[3500,3300]]", "width": 0.3 },
+    { "id": "t-lcd-bl-gnd", "netId": "net-lcd-backlight-gnd", "layerId": "top", "pointsJson": "[[4300,3900],[3500,3800]]", "width": 0.3 }
+  ],
+  "vias": [],
+  "zones": []
+}

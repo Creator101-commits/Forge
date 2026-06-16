@@ -50,6 +50,8 @@ pub fn run() {
             commands::ai::ai_chat,
             commands::ai::ai_apply_patch,
             commands::ai::ai_revert_patch,
+            commands::ai::ai_preview_patch,
+            commands::ai::ai_reject_action,
             commands::project::create_project,
             commands::project::open_project,
             commands::project::save_project,

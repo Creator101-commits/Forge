@@ -13,6 +13,7 @@ import { SymbolPalette } from "@/features/circuit/SymbolPalette";
 import { CircuitInspector } from "@/features/circuit/CircuitInspector";
 import { useGlobalHotkeys, PALETTE_HOTKEY } from "@/lib/hotkeys";
 import { useAutosave } from "@/hooks/useAutosave";
+import { OnboardingTour } from "@/features/onboarding/OnboardingTour";
 
 export function AppShell() {
   const active = useUiStore((s) => s.activeWorkspace);
@@ -70,6 +71,7 @@ export function AppShell() {
 
       <StatusBar />
       <CommandPalette />
+      <OnboardingTour />
     </div>
   );
 }

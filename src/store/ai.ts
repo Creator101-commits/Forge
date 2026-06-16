@@ -22,6 +22,8 @@ export interface AiState {
   clearChat: () => void;
   applyAction: (action: AiAction) => Promise<ActionRecord>;
   revertAction: (actionId: string) => Promise<void>;
+  previewPatch: (action: AiAction) => Promise<string>;
+  rejectAction: (actionId: string) => Promise<void>;
   selectProvider: (id: string | null) => void;
   selectModel: (model: string | null) => void;
 }
@@ -127,6 +129,17 @@ export const useAiStore = create<AiState>((set, get) => ({
 
   revertAction: async (actionId) => {
     await ipc.aiRevertPatch(actionId);
+    set((s) => ({
+      pendingActions: s.pendingActions.filter((a) => a.id !== actionId),
+    }));
+  },
+
+  previewPatch: async (action) => {
+    return await ipc.aiPreviewPatch(action);
+  },
+
+  rejectAction: async (actionId) => {
+    await ipc.aiRejectAction(actionId);
     set((s) => ({
       pendingActions: s.pendingActions.filter((a) => a.id !== actionId),
     }));
