@@ -265,6 +265,14 @@ export async function aiRevertPatch(actionId: string): Promise<void> {
   return invoke<void>("ai_revert_patch", { actionId });
 }
 
+export async function aiPreviewPatch(action: AiAction): Promise<string> {
+  return invoke<string>("ai_preview_patch", { action });
+}
+
+export async function aiRejectAction(actionId: string, reason?: string): Promise<void> {
+  return invoke<void>("ai_reject_action", { actionId, reason });
+}
+
 // ----- M4 Circuit command surface -----
 
 export interface CircuitComponent {
@@ -523,11 +531,41 @@ export async function bomUpdateItem(item: BomItem): Promise<BomItem> {
 
 // ----- M8 Export command surface -----
 
+export interface ForgeError {
+  code: string;
+  message: string;
+}
+
+export function parseForgeError(err: unknown): { code: string; message: string } {
+  if (err && typeof err === "object" && "code" in err && "message" in err) {
+    const e = err as Record<string, unknown>;
+    return { code: String(e.code ?? ""), message: String(e.message ?? "") };
+  }
+  const msg = String(err);
+  try {
+    return JSON.parse(msg) as { code: string; message: string };
+  } catch {
+    return { code: "unknown", message: msg };
+  }
+}
+
 export async function exportBomCsv(): Promise<string> {
   return invoke<string>("export_bom_csv");
 }
+export async function exportBomPdf(): Promise<string> {
+  return invoke<string>("export_bom_pdf");
+}
 export async function exportSchematicSvg(): Promise<string> {
   return invoke<string>("export_schematic_svg");
+}
+export async function exportPcbGerbers(): Promise<string> {
+  return invoke<string>("export_pcb_gerbers");
+}
+export async function exportCadScreenshot(): Promise<string> {
+  return invoke<string>("export_cad_screenshot");
+}
+export async function exportProjectBundle(): Promise<string> {
+  return invoke<string>("export_project_bundle");
 }
 
 // ----- M9 Compile command surface -----

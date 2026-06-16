@@ -1,9 +1,19 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { clsx } from "clsx";
-import { FolderPlus, FolderOpen, Sparkles, Clock, FileStack, ChevronRight } from "lucide-react";
+import {
+  FolderPlus,
+  FolderOpen,
+  Sparkles,
+  Clock,
+  FileStack,
+  ChevronRight,
+  Loader2,
+} from "lucide-react";
 import { useProjectStore } from "@/store/project";
 import { useUiStore } from "@/store/ui";
 import { TEMPLATES } from "./templates";
+
+const DEMO_PROJECT_PATH = "assets/demo-project";
 
 type Pane = "none" | "new" | "open";
 
@@ -11,12 +21,26 @@ export function Dashboard() {
   const recents = useProjectStore((s) => s.recents);
   const loadRecents = useProjectStore((s) => s.loadRecents);
   const openProject = useProjectStore((s) => s.openProject);
+  const status = useProjectStore((s) => s.status);
   const error = useProjectStore((s) => s.error);
   const [pane, setPane] = useState<Pane>("none");
+  const [demoBusy, setDemoBusy] = useState(false);
 
   useEffect(() => {
     void loadRecents();
   }, [loadRecents]);
+
+  const openDemo = useCallback(async () => {
+    if (demoBusy) return;
+    setDemoBusy(true);
+    try {
+      await openProject(DEMO_PROJECT_PATH);
+    } catch {
+      /* error surfaced via store */
+    } finally {
+      setDemoBusy(false);
+    }
+  }, [openProject, demoBusy]);
 
   return (
     <section
@@ -40,10 +64,10 @@ export function Dashboard() {
           onClick={() => setPane(pane === "open" ? "none" : "open")}
         />
         <ActionButton
-          icon={Sparkles}
-          label="Open Demo"
-          title="The Temperature Monitor demo ships in M10"
-          disabled
+          icon={demoBusy ? Loader2 : Sparkles}
+          label={demoBusy ? "Opening…" : "Open Demo"}
+          onClick={openDemo}
+          disabled={status === "loading"}
         />
       </div>
 

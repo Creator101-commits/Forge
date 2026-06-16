@@ -31,5 +31,10 @@ logs/
 # OS
 Thumbs.db
 
+# Agent / workspace artifacts
+.opencode/
+AGENTS.md
+SPEC-M*.md
+
 # TypeScript incremental build cache
 tsconfig.tsbuildinfo
