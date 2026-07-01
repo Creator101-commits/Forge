@@ -412,10 +412,15 @@ pub fn preview_patch_impl(state: &AppState, action: &AiAction) -> Result<String>
             replacement,
         } => {
             let existing = fs::read_file(&root, path)?;
-            let diff = crate::ai::actions::preview_patch(&existing, *start_line, *end_line, replacement);
+            let diff =
+                crate::ai::actions::preview_patch(&existing, *start_line, *end_line, replacement);
             Ok(diff)
         }
-        AiAction::InsertBefore { path, line, content } => {
+        AiAction::InsertBefore {
+            path,
+            line,
+            content,
+        } => {
             let existing = fs::read_file(&root, path)?;
             let diff = crate::ai::actions::preview_patch(&existing, *line, *line + 1, content);
             Ok(diff)
