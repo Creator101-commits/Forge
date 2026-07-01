@@ -43,7 +43,7 @@ jobs:
             libudev-dev
         if: matrix.language == 'rust'
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         if: matrix.language == 'javascript-typescript'
         with:
           node-version: "20"
