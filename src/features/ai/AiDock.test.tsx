@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
-import type { AiProviderInfo } from "@/lib/ipc";
+import type { AiProviderInfo, ActionRecord } from "@/lib/ipc";
 
 vi.mock("@/lib/ipc", () => ({
   aiListProviders: vi.fn(),
@@ -128,7 +128,7 @@ describe("AiDock", () => {
       action: { kind: "createFile", path: "test.ino" },
       status: "applied",
       description: "Create file: test.ino",
-    } as any);
+    } as ActionRecord);
     useAiStore.setState({
       selectedProvider: "openai",
       selectedModel: "gpt-4",

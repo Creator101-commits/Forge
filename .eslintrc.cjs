@@ -29,5 +29,9 @@ module.exports = {
     "@typescript-eslint/consistent-type-imports": ["error", { prefer: "type-imports" }],
     "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_", varsIgnorePattern: "^_" }],
     "no-console": ["warn", { allow: ["warn", "error"] }],
+    "react/no-unknown-property": ["error", { ignore: [
+      "intensity", "position", "args", "geometry", "rotation", "scale",
+      "makeDefault", "mode", "object", "castShadow", "receiveShadow",
+    ] }],
   },
 };

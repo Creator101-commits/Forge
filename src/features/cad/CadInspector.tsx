@@ -29,6 +29,14 @@ function NumField({
   );
 }
 
+function InspectorEmpty() {
+  return (
+    <aside className="w-56 shrink-0 border-l border-border-1 bg-bg-2 p-3">
+      <p className="text-center text-[11px] text-text-3">Nothing selected</p>
+    </aside>
+  );
+}
+
 export function CadInspector() {
   const objects = useCadStore((s) => s.objects);
   const selectedId = useCadStore((s) => s.selectedId);
@@ -37,42 +45,36 @@ export function CadInspector() {
 
   const selected = objects.find((o) => o.id === selectedId);
 
-  if (!selected) {
-    return (
-      <aside className="w-56 shrink-0 border-l border-border-1 bg-bg-2 p-3">
-        <p className="text-center text-[11px] text-text-3">Nothing selected</p>
-      </aside>
-    );
-  }
-
-  const def = PRIMITIVE_DEFS.find((d) => d.kind === selected.kind);
-
   const setPosition = useCallback(
     (axis: number, value: number) => {
-      const pos: [number, number, number] = [...selected.position];
+      const pos: [number, number, number] = [...(selected?.position ?? [0, 0, 0])];
       pos[axis] = value;
-      updateTransform(selected.id, pos);
+      updateTransform(selected?.id ?? "", pos);
     },
-    [selected.id, selected.position, updateTransform],
+    [selected?.id, selected?.position, updateTransform],
   );
 
   const setRotation = useCallback(
     (axis: number, value: number) => {
-      const rot: [number, number, number] = [...selected.rotation];
+      const rot: [number, number, number] = [...(selected?.rotation ?? [0, 0, 0])];
       rot[axis] = (value * Math.PI) / 180;
-      updateTransform(selected.id, undefined, rot);
+      updateTransform(selected?.id ?? "", undefined, rot);
     },
-    [selected.id, selected.rotation, updateTransform],
+    [selected?.id, selected?.rotation, updateTransform],
   );
 
   const setScale = useCallback(
     (axis: number, value: number) => {
-      const s: [number, number, number] = [...selected.scale];
+      const s: [number, number, number] = [...(selected?.scale ?? [1, 1, 1])];
       s[axis] = Math.max(0.01, value);
-      updateTransform(selected.id, undefined, undefined, s);
+      updateTransform(selected?.id ?? "", undefined, undefined, s);
     },
-    [selected.id, selected.scale, updateTransform],
+    [selected?.id, selected?.scale, updateTransform],
   );
+
+  if (!selected) return <InspectorEmpty />;
+
+  const def = PRIMITIVE_DEFS.find((d) => d.kind === selected.kind);
 
   return (
     <aside className="w-56 shrink-0 border-l border-border-1 bg-bg-2 overflow-y-auto">

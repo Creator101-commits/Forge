@@ -421,23 +421,17 @@ pub fn preview_patch_impl(state: &AppState, action: &AiAction) -> Result<String>
             Ok(diff)
         }
         AiAction::UpdateFile { path, content } => {
-            let existing = match fs::read_file(&root, path) {
-                Ok(c) => c,
-                Err(_) => String::new(),
-            };
+            let existing = fs::read_file(&root, path).unwrap_or_default();
             let diff = crate::ai::actions::preview_patch(&existing, 0, 0, content);
             Ok(diff)
         }
         AiAction::CreateFile { path, content } => {
-            let existing = String::new();
+            let _existing = String::new();
             let diff = format!("+ (new file) {path}\n{content}");
             Ok(diff)
         }
         AiAction::DeleteFile { path } => {
-            let existing = match fs::read_file(&root, path) {
-                Ok(c) => c,
-                Err(_) => String::new(),
-            };
+            let existing = fs::read_file(&root, path).unwrap_or_default();
             let diff = format!("- (delete) {path}\n{existing}");
             Ok(diff)
         }
